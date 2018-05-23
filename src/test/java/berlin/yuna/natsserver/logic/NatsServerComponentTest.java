@@ -10,6 +10,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.io.IOException;
 import java.net.Socket;
 
+import static berlin.yuna.natsserver.util.PortUtil.waitForPortShutdown;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -61,13 +62,15 @@ public class NatsServerComponentTest {
     }
 
     private void assertNatsServerStart(String... natsServerConfig) {
+        NatsServer natsServer = new NatsServer(natsServerConfig);
         try {
-            NatsServer natsServer = new NatsServer(natsServerConfig);
             natsServer.start();
             new Socket("localhost", 5222).close();
-            natsServer.stop();
         } catch (IOException e) {
             throw new RuntimeException(e);
+        } finally {
+            natsServer.stop();
+            waitForPortShutdown(5222);
         }
     }
 }
