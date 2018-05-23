@@ -1,0 +1,4 @@
+logging:
+  level:
+    org.springframework: ERROR
+    logging.level.yuna.berlin: INFO
