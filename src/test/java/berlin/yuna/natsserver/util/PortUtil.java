@@ -7,7 +7,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class PortUtil {
 
-    public static void waitForPortShutdown(int... portList) {
+    public static void waitUntilPortIsFree(int... portList) {
         for (Integer port : portList) {
             if (!shutDownPort(port)) {
                 throw new RuntimeException("Unable to shutdown port [" + port + "]");
@@ -17,7 +17,7 @@ public class PortUtil {
 
     private static boolean shutDownPort(Integer port) {
         final long start = System.currentTimeMillis();
-        long timeout = SECONDS.toMillis(10);
+        long timeout = SECONDS.toMillis(30);
         while (System.currentTimeMillis() - start < timeout) {
             if (isPortAvailable(port)) {
                 return true;
