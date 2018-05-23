@@ -10,6 +10,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.io.IOException;
 import java.net.Socket;
 
+import static berlin.yuna.natsserver.util.PortUtil.waitForPortShutdown;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -28,5 +29,7 @@ public class NatsServerWithPortComponentTest {
         assertThat(natsServer, is(notNullValue()));
         assertThat(natsServer.getPort(), is(6222));
         natsServer.stop();
+        waitForPortShutdown(5222);
+        waitForPortShutdown(6222);
     }
 }
