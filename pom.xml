@@ -73,6 +73,7 @@
                         <exclude>**/*/model/**/*</exclude>
                         <exclude>**/*/util/**/*</exclude>
                         <exclude>**/*/persistence/**/*</exclude>
+                        <exclude>**/*/target/classes/natsserver/**/*</exclude>
                     </excludes>
                 </configuration>
                 <executions>
