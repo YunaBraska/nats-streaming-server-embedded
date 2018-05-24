@@ -144,7 +144,7 @@ public class NatsServer implements DisposableBean {
         if (!waitForPort(false)) {
             throw new RuntimeException(new ConnectException(BEAN_NAME + "failed to start."));
         }
-        LOG.info("Started [{}] port [{}] version [{}-{}]", BEAN_NAME, NATS_SERVER_VERSION, OPERATING_SYSTEM);
+        LOG.info("Started [{}] port [{}] version [{}-{}]", BEAN_NAME, getPort(), NATS_SERVER_VERSION, OPERATING_SYSTEM);
     }
 
     /**
@@ -236,7 +236,7 @@ public class NatsServer implements DisposableBean {
         try {
             Files.setPosixFilePermissions(natsServerPath, EnumSet.of(OTHERS_EXECUTE, GROUP_EXECUTE, OWNER_EXECUTE, OTHERS_READ, GROUP_READ, OWNER_READ));
         } catch (IOException e) {
-            LOG.warn("Could not set permission to file [{}]", Arrays.asList(Files.getPosixFilePermissions(natsServerPath).toArray()), e.getMessage());
+            LOG.warn("Could not set permission to file [{}] [{}]", natsServerPath.getFileName(), Arrays.asList(Files.getPosixFilePermissions(natsServerPath).toArray()), e.getMessage());
         }
     }
 
@@ -274,7 +274,7 @@ public class NatsServer implements DisposableBean {
         } catch (Exception e) {
             port = -1;
         }
-        return "NatsServer{" +
+        return BEAN_NAME + "{" +
                 "NATS_SERVER_VERSION=" + NATS_SERVER_VERSION +
                 ", OPERATING_SYSTEM=" + OPERATING_SYSTEM +
                 ", port=" + port +
