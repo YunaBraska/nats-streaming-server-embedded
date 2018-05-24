@@ -41,8 +41,8 @@ public class NatsServer implements DisposableBean {
 
     public static final String name = NatsServer.class.getSimpleName();
     private static final Logger LOG = LoggerFactory.getLogger(NatsServer.class);
-    private static final String NATS_EXECUTION_FILE = "nats-streaming-server";
-    private static final String NATS_SERVER_FOLDER_VERSION = "nats-streaming-server-v0.9.2";
+    private static final String NATS_SERVER_VERSION = "v0.9.2";
+    private static final OperatingSystem OPERATING_SYSTEM = getOsType();
 
     private Map<String, String> natsServerConfig = new HashMap<>();
 
@@ -118,7 +118,7 @@ public class NatsServer implements DisposableBean {
             LOG.error("[{}] is already running", name);
             return;
         }
-        if (!isPortAvailable(getPort())) {
+        if (!waitForPort(true)) {
             throw new BindException("Address already in use [" + getPort() + "]");
         }
         Path natsServerPath = getNatsServerPath();
@@ -146,14 +146,16 @@ public class NatsServer implements DisposableBean {
         }
 
         ProcessBuilder builder = new ProcessBuilder();
-        if (getOsType() == WINDOWS) {
+        if (OPERATING_SYSTEM == WINDOWS) {
             builder.command("cmd.exe", "/c", command.toString());
         } else {
             builder.command("sh", "-c", command.toString());
         }
 
         process = builder.start();
-        waitForPort();
+        if (!waitForPort(false)) {
+            throw new RuntimeException(new ConnectException(name + "failed to start."));
+        }
         LOG.info("Started [{}] version [{}-{}]", name, version, os);
     }
 
@@ -199,20 +201,25 @@ public class NatsServer implements DisposableBean {
 
     }
 
-    private void waitForPort() {
+    private boolean waitForPort(boolean isFree) {
         final long start = System.currentTimeMillis();
         long timeout = SECONDS.toMillis(10);
 
         while (System.currentTimeMillis() - start < timeout) {
-            if (!isPortAvailable(getPort())) {
-                return;
+            if (isPortAvailable(getPort()) == isFree) {
+                return true;
             }
             Thread.yield();
         }
-        throw new RuntimeException(new ConnectException(name + "failed to start."));
+        return false;
     }
 
+    /**
+     * Gets Nats server path
+     *
+     * @return Resource/{NATS_SERVER_VERSION}/{OPERATING_SYSTEM}/{SIMPLE_CLASS_NAME}
+     */
     private Path getNatsServerPath() {
-        return Paths.get(requireNonNull(getClass().getClassLoader().getResource(NATS_SERVER_FOLDER_VERSION + File.separator + getOsType().toString().toLowerCase() + File.separator + NATS_EXECUTION_FILE)).getFile());
+        return Paths.get(requireNonNull(getClass().getClassLoader().getResource(NATS_SERVER_VERSION + File.separator + OPERATING_SYSTEM.toString().toLowerCase() + File.separator + name.toLowerCase() + (OPERATING_SYSTEM == WINDOWS ? ".exe" : ""))).getFile());
     }
 }

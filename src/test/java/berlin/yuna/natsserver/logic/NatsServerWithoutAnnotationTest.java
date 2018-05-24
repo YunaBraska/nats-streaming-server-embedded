@@ -13,7 +13,6 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 
-import static berlin.yuna.natsserver.util.PortUtil.waitUntilPortIsFree;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -27,7 +26,6 @@ public class NatsServerWithoutAnnotationTest {
 
     public void natsServer_withoutAnnotation_shouldNotBeStarted() throws Exception {
         expectedException.expect(ConnectException.class);
-        waitUntilPortIsFree(4222);
         new Socket("localhost", 4222).close();
     }
 
@@ -64,26 +62,24 @@ public class NatsServerWithoutAnnotationTest {
 
     @Test
     public void natsServer_duplicateStart_shouldNotRunIntroExceptionOrInterrupt() throws IOException {
-        NatsServer natsServer = new NatsServer(5222);
+        NatsServer natsServer = new NatsServer(4231);
         natsServer.start();
         natsServer.start();
         natsServer.stop();
-        waitUntilPortIsFree(5222);
     }
 
     @Test
     public void natsServer_withWrongConfig_shouldNotStartAndThrowException() throws IOException {
         expectedException.expect(RuntimeException.class);
         expectedException.expectMessage("ConnectException");
-        waitUntilPortIsFree(4222);
-        NatsServer natsServer = new NatsServer("unknown:config", "port:4222");
+        NatsServer natsServer = new NatsServer("unknown:config", "port:4232");
         natsServer.start();
     }
 
     @Test
     public void natsServer_asTwoInstances_shouldThrowBindException() {
-        NatsServer natsServer_one = new NatsServer(5222);
-        NatsServer natsServer_two = new NatsServer(5222);
+        NatsServer natsServer_one = new NatsServer(4233);
+        NatsServer natsServer_two = new NatsServer(4233);
         Exception exception = null;
         try {
             natsServer_one.start();
@@ -93,7 +89,6 @@ public class NatsServerWithoutAnnotationTest {
         } finally {
             natsServer_one.stop();
             natsServer_two.stop();
-            waitUntilPortIsFree(5222);
         }
         assertThat(exception.getClass().getSimpleName(), is(equalTo(BindException.class.getSimpleName())));
     }
