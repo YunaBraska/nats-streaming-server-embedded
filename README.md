@@ -1,5 +1,5 @@
 # EmbeddedNatsServer
-Embedded NatsServer for testing which contains the original NatsServer
+Embedded NatsStreamingServer for testing which contains the original NatsStreamingServer
 
 [![License][License-Image]][License-Url]
 [![Build][Build-Status-Image]][Build-Status-Url] 
@@ -9,7 +9,7 @@ Embedded NatsServer for testing which contains the original NatsServer
 [![Javadoc][javadoc-image]][javadoc-Url] 
 
 ### Features
-* One annotation to setup server the powerful nats server
+* One annotation to setup the powerful nats server
 ```
 @SpringBootTest
 @RunWith(SpringRunner.class)

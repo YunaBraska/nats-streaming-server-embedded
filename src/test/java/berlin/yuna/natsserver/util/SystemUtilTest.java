@@ -1,7 +1,6 @@
 package berlin.yuna.natsserver.util;
 
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -13,6 +12,7 @@ import static berlin.yuna.natsserver.util.SystemUtil.OperatingSystem.SOLARIS;
 import static berlin.yuna.natsserver.util.SystemUtil.OperatingSystem.UNKNOWN;
 import static berlin.yuna.natsserver.util.SystemUtil.OperatingSystem.WINDOWS;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -20,7 +20,7 @@ public class SystemUtilTest {
 
     private final static String osName = System.getProperty("os.name");
     private final static String osArch = System.getProperty("os.arch");
-    
+
     @After
     public void tearDown() {
         System.setProperty("os.name", osName);
@@ -74,5 +74,10 @@ public class SystemUtilTest {
     public void getOsType_withOtherOS_shouldReturnUnknown() {
         System.setProperty("os.name", "otherOth");
         assertThat(SystemUtil.getOsType(), is(UNKNOWN));
+    }
+
+    @Test
+    public void newInstance_smokeTest() {
+        assertThat(new SystemUtil(), is(notNullValue()));
     }
 }
