@@ -159,6 +159,24 @@
                     <autoReleaseAfterClose>false</autoReleaseAfterClose>
                 </configuration>
             </plugin>
+            <plugin>
+                <artifactId>maven-scm-plugin</artifactId>
+                <version>1.9.5</version>
+                <configuration>
+                    <tag>${project.version}</tag>
+                </configuration>
+                <!-- only tag this module, not each individually -->
+                <inherited>false</inherited>
+                <executions>
+                    <execution>
+                        <id>git-tag</id>
+                        <goals>
+                            <goal>tag</goal>
+                        </goals>
+                        <phase>deploy</phase>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 

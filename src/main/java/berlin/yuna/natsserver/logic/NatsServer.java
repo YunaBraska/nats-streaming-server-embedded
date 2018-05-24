@@ -105,17 +105,8 @@ public class NatsServer implements DisposableBean {
     public void setNatsServerConfig(String... natsServerConfigArray) {
         Map<String, String> natsServerConfig = new HashMap<>();
         for (String property : natsServerConfigArray) {
-            if (!StringUtils.hasText(property)) {
-                continue;
-            }
             String[] pair = property.split(":");
-            if (pair.length < 2) {
-                pair = property.split("=");
-            }
-            if (pair.length < 2) {
-                pair = property.split(" ");
-            }
-            if (pair.length != 2) {
+            if (!StringUtils.hasText(property) || pair.length != 2) {
                 LOG.error("Could not parse property [{}] pair length [{}]", property, pair.length);
                 continue;
             }
@@ -136,45 +127,24 @@ public class NatsServer implements DisposableBean {
             LOG.error("[{}] is already running", BEAN_NAME);
             return;
         }
+
         if (!waitForPort(true)) {
             throw new BindException("Address already in use [" + getPort() + "]");
         }
+
         Path natsServerPath = getNatsServerPath();
-        Path os = natsServerPath.getParent().getFileName();
-        Path version = natsServerPath.getParent().getParent().getFileName();
-        LOG.info("Starting [{}] port [{}] version [{}-{}]", BEAN_NAME, getPort(), version, os);
+        LOG.info("Starting [{}] port [{}] version [{}-{}]", BEAN_NAME, getPort(), NATS_SERVER_VERSION, OPERATING_SYSTEM);
 
-        try {
-            Files.setPosixFilePermissions(natsServerPath, EnumSet.of(OTHERS_EXECUTE, GROUP_EXECUTE, OWNER_EXECUTE, OTHERS_READ, GROUP_READ, OWNER_READ));
-        } catch (IOException e) {
-            LOG.warn("Could not set permission to file [{}]", Arrays.asList(Files.getPosixFilePermissions(natsServerPath).toArray()), e.getMessage());
-        }
+        fixFilePermissions(natsServerPath);
 
-        StringBuilder command = new StringBuilder();
-        command.append(natsServerPath.toString());
-        for (Entry<String, String> entry : natsServerConfig.entrySet()) {
-            String key = entry.getKey().trim().toLowerCase();
-            command.append(" ");
-            if (!entry.getKey().startsWith("--") && !entry.getKey().startsWith("-")) {
-                command.append("--");
-            }
-            command.append(key);
-            command.append(" ");
-            command.append(entry.getValue().trim().toLowerCase());
-        }
+        String command = prepareCommand(natsServerPath);
 
-        ProcessBuilder builder = new ProcessBuilder();
-        if (OPERATING_SYSTEM == WINDOWS) {
-            builder.command("cmd.exe", "/c", command.toString());
-        } else {
-            builder.command("sh", "-c", command.toString());
-        }
+        executeCommand(command);
 
-        process = builder.start();
         if (!waitForPort(false)) {
             throw new RuntimeException(new ConnectException(BEAN_NAME + "failed to start."));
         }
-        LOG.info("Started [{}] port [{}] version [{}-{}]", BEAN_NAME, getPort(), version, os);
+        LOG.info("Started [{}] port [{}] version [{}-{}]", BEAN_NAME, NATS_SERVER_VERSION, OPERATING_SYSTEM);
     }
 
     /**
@@ -226,6 +196,20 @@ public class NatsServer implements DisposableBean {
         stop();
     }
 
+    /**
+     * Gets Nats server path
+     *
+     * @return Resource/{SIMPLE_CLASS_NAME}/{NATS_SERVER_VERSION}/{OPERATING_SYSTEM}/{SIMPLE_CLASS_NAME}
+     */
+    private Path getNatsServerPath() {
+        StringBuilder path = new StringBuilder();
+        path.append(BEAN_NAME.toLowerCase()).append(File.separator);
+        path.append(NATS_SERVER_VERSION).append(File.separator);
+        path.append(OPERATING_SYSTEM.toString().toLowerCase()).append(File.separator);
+        path.append(BEAN_NAME.toLowerCase()).append((OPERATING_SYSTEM == WINDOWS ? ".exe" : ""));
+        return Paths.get(requireNonNull(getClass().getClassLoader().getResource(path.toString())).getFile());
+    }
+
     private boolean waitForPort(boolean isFree) {
         final long start = System.currentTimeMillis();
         long timeout = SECONDS.toMillis(10);
@@ -248,18 +232,38 @@ public class NatsServer implements DisposableBean {
         }
     }
 
-    /**
-     * Gets Nats server path
-     *
-     * @return Resource/{SIMPLE_CLASS_NAME}/{NATS_SERVER_VERSION}/{OPERATING_SYSTEM}/{SIMPLE_CLASS_NAME}
-     */
-    private Path getNatsServerPath() {
-        StringBuilder path = new StringBuilder();
-        path.append(BEAN_NAME.toLowerCase()).append(File.separator);
-        path.append(NATS_SERVER_VERSION).append(File.separator);
-        path.append(OPERATING_SYSTEM.toString().toLowerCase()).append(File.separator);
-        path.append(BEAN_NAME.toLowerCase()).append((OPERATING_SYSTEM == WINDOWS ? ".exe" : ""));
-        return Paths.get(requireNonNull(getClass().getClassLoader().getResource(path.toString())).getFile());
+    private void fixFilePermissions(Path natsServerPath) throws IOException {
+        try {
+            Files.setPosixFilePermissions(natsServerPath, EnumSet.of(OTHERS_EXECUTE, GROUP_EXECUTE, OWNER_EXECUTE, OTHERS_READ, GROUP_READ, OWNER_READ));
+        } catch (IOException e) {
+            LOG.warn("Could not set permission to file [{}]", Arrays.asList(Files.getPosixFilePermissions(natsServerPath).toArray()), e.getMessage());
+        }
+    }
+
+    private void executeCommand(String command) throws IOException {
+        ProcessBuilder builder = new ProcessBuilder();
+        if (OPERATING_SYSTEM == WINDOWS) {
+            builder.command("cmd.exe", "/c", command);
+        } else {
+            builder.command("sh", "-c", command);
+        }
+        process = builder.start();
+    }
+
+    private String prepareCommand(Path natsServerPath) {
+        StringBuilder command = new StringBuilder();
+        command.append(natsServerPath.toString());
+        for (Entry<String, String> entry : getNatsServerConfig().entrySet()) {
+            String key = entry.getKey().trim().toLowerCase();
+            command.append(" ");
+            if (!entry.getKey().startsWith("--") && !entry.getKey().startsWith("-")) {
+                command.append("--");
+            }
+            command.append(key);
+            command.append(" ");
+            command.append(entry.getValue().trim().toLowerCase());
+        }
+        return command.toString();
     }
 
     @Override
