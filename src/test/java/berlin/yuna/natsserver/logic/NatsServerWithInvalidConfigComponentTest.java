@@ -10,16 +10,13 @@ import java.io.IOException;
 import java.net.ConnectException;
 import java.net.Socket;
 
-import static berlin.yuna.natsserver.util.PortUtil.waitForPortShutdown;
-
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@EnableNatsServer(port = 5222, natsServerConfig = "invalid:config")
+@EnableNatsServer(port = 4230, natsServerConfig = "invalid:config")
 public class NatsServerWithInvalidConfigComponentTest {
 
     @Test(expected = ConnectException.class)
     public void natsServer_shouldStart() throws IOException {
-        new Socket("localhost", 5222).close();
-        waitForPortShutdown(5222);
+        new Socket("localhost", 4230).close();
     }
 }
