@@ -15,7 +15,7 @@
     <packaging>jar</packaging>
 
     <name>${project.artifactId}</name>
-    <description>Embedded NatsServer for testing which contains the original NatsServer</description>
+    <description>Embedded NatsServer for testing which contains the original NatsStreamingServer</description>
     <url>https://github.com/YunaBraska/EmbeddedNatsServer</url>
 
     <developers>
