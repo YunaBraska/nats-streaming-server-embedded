@@ -13,7 +13,6 @@ import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
@@ -154,17 +153,12 @@ public class NatsServer implements DisposableBean {
      * @throws RuntimeException as {@link InterruptedException} if shutdown is interrupted
      */
     public void stop() {
-        LOG.info("Stopping [{}]", BEAN_NAME);
-        if (process == null) {
-            LOG.warn("Could not stop [{}] cause cant find process", BEAN_NAME);
-            return;
-        }
-        process.destroy();
-
         try {
+            LOG.info("Stopping [{}]", BEAN_NAME);
+            process.destroy();
             process.waitFor();
-        } catch (InterruptedException e) {
-            LOG.error("Shutdown was interrupted", e);
+        } catch (NullPointerException | InterruptedException e) {
+            LOG.warn("Could not stop [{}] cause cant find process", BEAN_NAME);
         } finally {
             LOG.info("Stopped [{}]", BEAN_NAME);
         }
@@ -233,11 +227,7 @@ public class NatsServer implements DisposableBean {
     }
 
     private void fixFilePermissions(Path natsServerPath) throws IOException {
-        try {
-            Files.setPosixFilePermissions(natsServerPath, EnumSet.of(OTHERS_EXECUTE, GROUP_EXECUTE, OWNER_EXECUTE, OTHERS_READ, GROUP_READ, OWNER_READ));
-        } catch (IOException e) {
-            LOG.warn("Could not set permission to file [{}] [{}]", natsServerPath.getFileName(), Arrays.asList(Files.getPosixFilePermissions(natsServerPath).toArray()), e.getMessage());
-        }
+        Files.setPosixFilePermissions(natsServerPath, EnumSet.of(OTHERS_EXECUTE, GROUP_EXECUTE, OWNER_EXECUTE, OTHERS_READ, GROUP_READ, OWNER_READ));
     }
 
     private void executeCommand(String command) throws IOException {
