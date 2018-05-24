@@ -56,8 +56,9 @@ public class NatsServerWithoutAnnotationTest {
     @Test
     public void natsServer_invalidConfig_shouldNotRunIntroException() {
         NatsServer natsServer = new NatsServer();
-        natsServer.setNatsServerConfig("user:adminUser:password", " ", "");
-        assertThat(natsServer.getNatsServerConfig().size(), is(0));
+        natsServer.setNatsServerConfig("user:adminUser:password", " ", "onlyThis:isValid", "");
+        assertThat(natsServer.getNatsServerConfig().size(), is(1));
+        assertThat(natsServer.getNatsServerConfig().get("onlyThis"), is(equalTo("isValid")));
     }
 
     @Test
