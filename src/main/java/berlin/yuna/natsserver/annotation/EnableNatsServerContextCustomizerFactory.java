@@ -9,6 +9,11 @@ import java.util.List;
 
 public class EnableNatsServerContextCustomizerFactory implements ContextCustomizerFactory {
 
+    /**
+     * @param testClass        current test class with {@link EnableNatsServer} annotation
+     * @param configAttributes {@link ContextConfigurationAttributes} not in use
+     * @return {@link EnableNatsServerContextCustomizer}
+     */
     @Override
     public ContextCustomizer createContextCustomizer(Class<?> testClass, List<ContextConfigurationAttributes> configAttributes) {
         EnableNatsServer enableNatsServer = AnnotatedElementUtils.findMergedAnnotation(testClass, EnableNatsServer.class);

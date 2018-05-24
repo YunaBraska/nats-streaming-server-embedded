@@ -9,8 +9,18 @@ import static berlin.yuna.natsserver.util.SystemUtil.OperatingSystem.WINDOWS;
 
 public class SystemUtil {
 
-    public enum OperatingSystem {ARM, LINUX, MAC, WINDOWS, SOLARIS, UNKNOWN}
+    /**
+     * Supported operation system enum
+     */
+    public enum OperatingSystem {
+        ARM, LINUX, MAC, WINDOWS, SOLARIS, UNKNOWN
+    }
 
+    /**
+     * Get current operating system
+     *
+     * @return current {@link OperatingSystem} if supported, else {@link OperatingSystem#UNKNOWN}
+     */
     public static OperatingSystem getOsType() {
         String osName = System.getProperty("os.name").toLowerCase();
         String osArch = System.getProperty("os.arch").toLowerCase();

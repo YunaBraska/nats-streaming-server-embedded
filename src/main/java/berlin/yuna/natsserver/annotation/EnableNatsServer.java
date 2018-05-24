@@ -22,11 +22,11 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * The typical usage of this annotation is like:
  * <pre class="code">
  * &#064;RunWith(SpringRunner.class)
- * &#064;EnableNatsServer
+ * &#064;{@link EnableNatsServer}
  * public class MyNatsTests {
  *
- *    &#064;Autowired
- *    private NatsServer natsServer;
+ *    &#064;{@link org.springframework.beans.factory.annotation.Autowired}
+ *    private {@link NatsServer} natsServer;
  *
  * }
  * </pre>
@@ -42,13 +42,12 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 public @interface EnableNatsServer {
 
     /**
-     * @return port number
+     * Passes port number to {@link NatsServer#setNatsServerConfig(String...)}
      */
     int port() default 4222;
 
     /**
-     * Passes the original parameters to the server on startup
-     * @see NatsServer#setNatsServerConfig(String...)
+     * Passes the original parameters to {@link NatsServer#setNatsServerConfig(String...)} for startup
      */
     String[] natsServerConfig() default {};
 

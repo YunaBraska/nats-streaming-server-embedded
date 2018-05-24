@@ -15,9 +15,11 @@ public class SomeTest {
 ```
 
 ### TODO
+* calculate on adding parameter
 * Autoconfig for live usage
 * Parameter table
 * Read command errors for exceptions
+* Port issues on CI - Seems that the test context is restarting much faster than the ports are shutting down - at least some times
 
 ![EmbeddedNatsServer](src/test/resources/banner.png "EmbeddedNatsServer")
 
