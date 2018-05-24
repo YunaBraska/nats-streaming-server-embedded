@@ -36,16 +36,6 @@ public class NatsServerComponentTest {
     }
 
     @Test
-    public void secondNatsServer_withSpaceSeparatedProperty_shouldStartSuccessful() {
-        assertNatsServerStart(4229, "--port 4229");
-    }
-
-    @Test
-    public void secondNatsServer_withEqualsSeparatedProperty_shouldStartSuccessful() {
-        assertNatsServerStart(4224,"--port=4224");
-    }
-
-    @Test
     public void secondNatsServer_withDoublePointSeparatedProperty_shouldStartSuccessful() {
         assertNatsServerStart(4225,"--port:4225");
     }
