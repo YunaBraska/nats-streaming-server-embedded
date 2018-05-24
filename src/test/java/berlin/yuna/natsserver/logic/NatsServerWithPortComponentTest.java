@@ -10,14 +10,13 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.io.IOException;
 import java.net.Socket;
 
-import static berlin.yuna.natsserver.util.PortUtil.waitUntilPortIsFree;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@EnableNatsServer(port = 5222, natsServerConfig = "port:6222")
+@EnableNatsServer(port = 4234, natsServerConfig = "port:4235")
 public class NatsServerWithPortComponentTest {
 
     @Autowired
@@ -25,11 +24,9 @@ public class NatsServerWithPortComponentTest {
 
     @Test
     public void natsServer_customShouldPortOverwritePort() throws IOException {
-        new Socket("localhost", 6222).close();
+        new Socket("localhost", 4235).close();
         assertThat(natsServer, is(notNullValue()));
-        assertThat(natsServer.getPort(), is(6222));
+        assertThat(natsServer.getPort(), is(4235));
         natsServer.stop();
-        waitUntilPortIsFree(5222);
-        waitUntilPortIsFree(6222);
     }
 }

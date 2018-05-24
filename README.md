@@ -15,9 +15,11 @@ public class SomeTest {
 ```
 
 ### TODO
+* calculate on adding parameter
 * Autoconfig for live usage
 * Parameter table
 * Read command errors for exceptions
+* Port issues - Seems that the application is shutting down much faster than the port is doing - at least some times
 
 ![EmbeddedNatsServer](src/test/resources/banner.png "EmbeddedNatsServer")
 
