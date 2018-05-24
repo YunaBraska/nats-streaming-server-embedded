@@ -17,15 +17,19 @@ import static org.hamcrest.MatcherAssert.assertThat;
 @RunWith(MockitoJUnitRunner.class)
 public class SystemUtilTest {
 
+    private final static String osName = System.getProperty("os.name");
+    private final static String osArch = System.getProperty("os.arch");
+
     @Before
     public void setUp() {
-        System.setProperty("os.arch", "amd64");
+        System.setProperty("os.name", osName);
+        System.setProperty("os.arch", osArch);
     }
 
     @Test
     public void getOsType_withArm_shouldReturnArm() {
         System.setProperty("os.arch", "arm-linux");
-        System.setProperty("os.name", "linux");
+        System.setProperty("os.name", "notRelevant");
         assertThat(SystemUtil.getOsType(), is(ARM));
     }
 
