@@ -42,6 +42,9 @@ import static org.slf4j.LoggerFactory.getLogger;
  */
 public class NatsServer implements DisposableBean {
 
+    /**
+     * simpleName from {@link NatsServer} class
+     */
     public static final String BEAN_NAME = NatsServer.class.getSimpleName();
     private static final Logger LOG = getLogger(NatsServer.class);
     private static final String NATS_SERVER_VERSION = "v0.9.2";
@@ -139,7 +142,7 @@ public class NatsServer implements DisposableBean {
         Path natsServerPath = getNatsServerPath();
         Path os = natsServerPath.getParent().getFileName();
         Path version = natsServerPath.getParent().getParent().getFileName();
-        LOG.info("Starting [{}] version [{}-{}]", BEAN_NAME, version, os);
+        LOG.info("Starting [{}] port [{}] version [{}-{}]", BEAN_NAME, getPort(), version, os);
 
         try {
             Files.setPosixFilePermissions(natsServerPath, EnumSet.of(OTHERS_EXECUTE, GROUP_EXECUTE, OWNER_EXECUTE, OTHERS_READ, GROUP_READ, OWNER_READ));
@@ -171,14 +174,14 @@ public class NatsServer implements DisposableBean {
         if (!waitForPort(false)) {
             throw new RuntimeException(new ConnectException(BEAN_NAME + "failed to start."));
         }
-        LOG.info("Started [{}] version [{}-{}]", BEAN_NAME, version, os);
+        LOG.info("Started [{}] port [{}] version [{}-{}]", BEAN_NAME, getPort(), version, os);
     }
 
     /**
      * Stops the {@link ProcessBuilder} and kills the {@link NatsServer}
      * Only a log error will occur if the {@link NatsServer} were never started
      *
-     * @throws InterruptedException if shutdown is interrupted
+     * @throws RuntimeException as {@link InterruptedException} if shutdown is interrupted
      */
     public void stop() {
         LOG.info("Stopping [{}]", BEAN_NAME);
