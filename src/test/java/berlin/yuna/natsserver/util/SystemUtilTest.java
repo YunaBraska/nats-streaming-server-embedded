@@ -1,5 +1,6 @@
 package berlin.yuna.natsserver.util;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,9 +20,9 @@ public class SystemUtilTest {
 
     private final static String osName = System.getProperty("os.name");
     private final static String osArch = System.getProperty("os.arch");
-
-    @Before
-    public void setUp() {
+    
+    @After
+    public void tearDown() {
         System.setProperty("os.name", osName);
         System.setProperty("os.arch", osArch);
     }
