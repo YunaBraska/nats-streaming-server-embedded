@@ -1,5 +1,6 @@
 package berlin.yuna.natsserver.util;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,15 +18,19 @@ import static org.hamcrest.MatcherAssert.assertThat;
 @RunWith(MockitoJUnitRunner.class)
 public class SystemUtilTest {
 
-    @Before
-    public void setUp() {
-        System.setProperty("os.arch", "amd64");
+    private final static String osName = System.getProperty("os.name");
+    private final static String osArch = System.getProperty("os.arch");
+    
+    @After
+    public void tearDown() {
+        System.setProperty("os.name", osName);
+        System.setProperty("os.arch", osArch);
     }
 
     @Test
     public void getOsType_withArm_shouldReturnArm() {
         System.setProperty("os.arch", "arm-linux");
-        System.setProperty("os.name", "linux");
+        System.setProperty("os.name", "notRelevant");
         assertThat(SystemUtil.getOsType(), is(ARM));
     }
 
