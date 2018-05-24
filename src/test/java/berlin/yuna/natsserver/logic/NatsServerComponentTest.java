@@ -3,6 +3,7 @@ package berlin.yuna.natsserver.logic;
 import berlin.yuna.natsserver.annotation.EnableNatsServer;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -13,17 +14,21 @@ import java.net.Socket;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.slf4j.LoggerFactory.getLogger;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @EnableNatsServer
 public class NatsServerComponentTest {
 
+    private static final Logger LOG = getLogger(NatsServer.class);
+
     @Autowired
     private NatsServer natsServer;
 
     @Test
     public void natsServer_shouldStart() throws IOException {
+        LOG.info(natsServer.toString());
         new Socket("localhost", 4222).close();
         assertThat(natsServer, is(notNullValue()));
         assertThat(natsServer.getPort(), is(4222));

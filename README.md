@@ -19,7 +19,7 @@ public class SomeTest {
 * Autoconfig for live usage
 * Parameter table
 * Read command errors for exceptions
-* Port issues - Seems that the application is shutting down much faster than the port is doing - at least some times
+* Port issues on CI - Seems that the test context is restarting much faster than the ports are shutting down - at least some times
 
 ![EmbeddedNatsServer](src/test/resources/banner.png "EmbeddedNatsServer")
 
