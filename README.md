@@ -2,6 +2,7 @@
 Embedded NatsServer for testing which contains the original NatsServer
 [![License][License-Image]][License-Url]
 [![Build][Build-Status-Image]][Build-Status-Url] 
+[![Coverage][Coverage-image]][Coverage-Url] 
 
 ### Features
 * One annotation to setup server the powerful nats server
@@ -28,3 +29,5 @@ public class SomeTest {
 [github-release]: https://github.com/YunaBraska/EmbeddedNatsServer
 [Build-Status-Url]: https://travis-ci.org/YunaBraska/EmbeddedNatsServer
 [Build-Status-Image]: https://travis-ci.org/YunaBraska/EmbeddedNatsServer.svg?branch=master
+[Coverage-Url]: https://codecov.io/gh/YunaBraska/EmbeddedNatsServer
+[Coverage-image]: https://img.shields.io/codecov/c/github/dstructs/matrix/master.svg
