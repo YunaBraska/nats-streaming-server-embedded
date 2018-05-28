@@ -22,10 +22,9 @@ public class SomeTest {
 ```
 
 ### TODO
-* rename project - camel case is ugly
 * calculate on adding parameter
-* Autoconfig for live usage
-* Parameter table
+* Spring boot autoconfig for live usage
+* Parameter class with description
 * Read command errors for exceptions
 * Port issues on CI - Seems that the test context is restarting much faster than the ports are shutting down - at least some times
 
