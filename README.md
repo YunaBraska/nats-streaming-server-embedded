@@ -1,5 +1,7 @@
 # Nats Streaming Server Embedded
 
+[![Join the chat at https://gitter.im/nats-streaming-server-embedded/Lobby](https://badges.gitter.im/nats-streaming-server-embedded/Lobby.svg)](https://gitter.im/nats-streaming-server-embedded/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 [![License][License-Image]][License-Url]
 [![Build][Build-Status-Image]][Build-Status-Url] 
 [![Coverage][Coverage-image]][Coverage-Url] 
