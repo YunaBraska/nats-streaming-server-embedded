@@ -9,15 +9,14 @@ import java.io.File;
 import java.io.IOException;
 import java.net.BindException;
 import java.net.ConnectException;
+import java.net.PortUnreachableException;
 import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.ServiceConfigurationError;
 
 import static berlin.yuna.natsserver.util.SystemUtil.OperatingSystem.WINDOWS;
 import static berlin.yuna.natsserver.util.SystemUtil.getOsType;
@@ -27,7 +26,6 @@ import static java.nio.file.attribute.PosixFilePermission.OTHERS_EXECUTE;
 import static java.nio.file.attribute.PosixFilePermission.OTHERS_READ;
 import static java.nio.file.attribute.PosixFilePermission.OWNER_EXECUTE;
 import static java.nio.file.attribute.PosixFilePermission.OWNER_READ;
-import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -102,7 +100,7 @@ public class NatsServer implements DisposableBean {
      * @param natsServerConfigArray example: port:4222, user:admin, password:admin
      */
     public void setNatsServerConfig(String... natsServerConfigArray) {
-        Map<String, String> natsServerConfig = new HashMap<>();
+        natsServerConfig = new HashMap<>();
         for (String property : natsServerConfigArray) {
             String[] pair = property.split(":");
             if (!StringUtils.hasText(property) || pair.length != 2) {
@@ -111,15 +109,14 @@ public class NatsServer implements DisposableBean {
             }
             natsServerConfig.put(pair[0], pair[1]);
         }
-        this.natsServerConfig = natsServerConfig;
     }
 
     /**
      * Starts the server in {@link ProcessBuilder} with the given parameterConfig {@link NatsServer#setNatsServerConfig(String...)}
      *
-     * @throws IOException      if {@link NatsServer} is not found or unsupported on the {@link OperatingSystem}
-     * @throws BindException    if port is already taken
-     * @throws RuntimeException with {@link ConnectException} if {@link NatsServer} is not starting
+     * @throws IOException              if {@link NatsServer} is not found or unsupported on the {@link OperatingSystem}
+     * @throws BindException            if port is already taken
+     * @throws PortUnreachableException if {@link NatsServer} is not starting cause port is not free
      */
     public void start() throws IOException {
         if (process != null) {
@@ -134,14 +131,12 @@ public class NatsServer implements DisposableBean {
         Path natsServerPath = getNatsServerPath();
         LOG.info("Starting [{}] port [{}] version [{}-{}]", BEAN_NAME, getPort(), NATS_SERVER_VERSION, OPERATING_SYSTEM);
 
-        fixFilePermissions(natsServerPath);
-
         String command = prepareCommand(natsServerPath);
 
         executeCommand(command);
 
         if (!waitForPort(false)) {
-            throw new RuntimeException(new ConnectException(BEAN_NAME + "failed to start."));
+            throw new PortUnreachableException(BEAN_NAME + "failed to start.");
         }
         LOG.info("Started [{}] port [{}] version [{}-{}]", BEAN_NAME, getPort(), NATS_SERVER_VERSION, OPERATING_SYSTEM);
     }
@@ -168,7 +163,7 @@ public class NatsServer implements DisposableBean {
      * Gets the port out of the configuration not from the real PID
      *
      * @return configured port of the server
-     * @throws RuntimeException with {@link ServiceConfigurationError} when there is no port configured
+     * @throws RuntimeException with {@link ConnectException} when there is no port configured
      */
     public int getPort() {
         for (String key : new String[]{"port", "--port", "-p"}) {
@@ -177,7 +172,7 @@ public class NatsServer implements DisposableBean {
                 return Integer.valueOf(port);
             }
         }
-        throw new RuntimeException(new ServiceConfigurationError("Could not initialise port" + BEAN_NAME));
+        throw new RuntimeException(new ConnectException("Could not initialise port" + BEAN_NAME));
     }
 
     /**
@@ -201,7 +196,21 @@ public class NatsServer implements DisposableBean {
         path.append(NATS_SERVER_VERSION).append(File.separator);
         path.append(OPERATING_SYSTEM.toString().toLowerCase()).append(File.separator);
         path.append(BEAN_NAME.toLowerCase()).append((OPERATING_SYSTEM == WINDOWS ? ".exe" : ""));
-        return Paths.get(requireNonNull(getClass().getClassLoader().getResource(path.toString())).getFile());
+        return copyResourceFile(path.toString());
+    }
+
+    private Path copyResourceFile(final String path) {
+        File tmpFile = new File(System.getProperty("java.io.tmpdir"), new File(path).getName());
+        if (!tmpFile.exists()) {
+            LOG.info("Creating [{}]", BEAN_NAME);
+            try {
+                Files.copy(getClass().getClassLoader().getResourceAsStream(path), tmpFile.toPath());
+                fixFilePermissions(tmpFile.toPath());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return tmpFile.toPath();
     }
 
     private boolean waitForPort(boolean isFree) {
@@ -226,8 +235,12 @@ public class NatsServer implements DisposableBean {
         }
     }
 
-    private void fixFilePermissions(Path natsServerPath) throws IOException {
-        Files.setPosixFilePermissions(natsServerPath, EnumSet.of(OTHERS_EXECUTE, GROUP_EXECUTE, OWNER_EXECUTE, OTHERS_READ, GROUP_READ, OWNER_READ));
+    private void fixFilePermissions(Path natsServerPath) {
+        try {
+            Files.setPosixFilePermissions(natsServerPath, EnumSet.of(OTHERS_EXECUTE, GROUP_EXECUTE, OWNER_EXECUTE, OTHERS_READ, GROUP_READ, OWNER_READ));
+        } catch (IOException e) {
+            LOG.warn("Could not save permissions for [{}]", natsServerPath.toString(), e);
+        }
     }
 
     private void executeCommand(String command) throws IOException {

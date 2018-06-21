@@ -9,6 +9,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.io.IOException;
 import java.net.BindException;
 import java.net.ConnectException;
+import java.net.PortUnreachableException;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
@@ -71,8 +72,7 @@ public class NatsServerWithoutAnnotationTest {
 
     @Test
     public void natsServer_withWrongConfig_shouldNotStartAndThrowException() throws IOException {
-        expectedException.expect(RuntimeException.class);
-        expectedException.expectMessage("ConnectException");
+        expectedException.expect(PortUnreachableException.class);
         NatsServer natsServer = new NatsServer("unknown:config", "port:4232");
         natsServer.start();
     }
