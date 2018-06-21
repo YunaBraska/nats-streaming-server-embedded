@@ -12,7 +12,7 @@
 
     <groupId>berlin.yuna</groupId>
     <artifactId>nats-streaming-server-embedded</artifactId>
-    <version>0.0.1</version>
+    <version>0.1.0</version>
     <packaging>jar</packaging>
 
     <name>${project.artifactId}</name>
@@ -36,6 +36,11 @@
     <properties>
         <spring-boot.version>2.0.2.RELEASE</spring-boot.version>
         <git-project.url>https://github.com/YunaBraska/nats-streaming-server-embedded</git-project.url>
+
+        <!-- sonar:sonar -Dsonar.organization=yunabraska-github -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=18ed5d4bd536befbac669d408bb4fd3b2c23f748 -->
+        <!--<sonar.host.url>https://sonarcloud.io</sonar.host.url>-->
+        <!--<sonar.organization>yunabraska-github</sonar.organization>-->
+        <!--<sonar.login>18ed5d4bd536befbac669d408bb4fd3b2c23f748</sonar.login>-->
     </properties>
 
     <dependencies>
