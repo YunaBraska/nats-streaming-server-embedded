@@ -1,5 +1,6 @@
 package berlin.yuna.natsserver.logic;
 
+import berlin.yuna.natsserver.config.NatsServerConfig;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -13,10 +14,15 @@ import java.net.PortUnreachableException;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.MissingFormatArgumentException;
 
+import static berlin.yuna.natsserver.config.NatsServerConfig.AUTH;
+import static berlin.yuna.natsserver.config.NatsServerConfig.MAX_AGE;
+import static berlin.yuna.natsserver.config.NatsServerConfig.PASS;
+import static berlin.yuna.natsserver.config.NatsServerConfig.PORT;
+import static berlin.yuna.natsserver.config.NatsServerConfig.USER;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -37,29 +43,29 @@ public class NatsServerWithoutAnnotationTest {
     }
 
     @Test
-    public void natsServer_configureConfig_shouldOverwriteOldOne() {
+    public void natsServer_configureConfig_shouldNotOverwriteOldConfig() {
         NatsServer natsServer = new NatsServer();
-        natsServer.setNatsServerConfig("user:adminUser", "password:adminPw");
+        natsServer.setNatsServerConfig("user:adminUser", "PAss:adminPw");
 
-        assertThat(natsServer.getNatsServerConfig().get("user"), is(equalTo("adminUser")));
-        assertThat(natsServer.getNatsServerConfig().get("password"), is(equalTo("adminPw")));
+        assertThat(natsServer.getNatsServerConfig().get(USER), is(equalTo("adminUser")));
+        assertThat(natsServer.getNatsServerConfig().get(PASS), is(equalTo("adminPw")));
 
         natsServer.setNatsServerConfig("user:newUser");
-        assertThat(natsServer.getNatsServerConfig().get("user"), is(equalTo("newUser")));
-        assertThat(natsServer.getNatsServerConfig().get("password"), is(nullValue()));
+        assertThat(natsServer.getNatsServerConfig().get(USER), is(equalTo("newUser")));
+        assertThat(natsServer.getNatsServerConfig().get(PASS), is("adminPw"));
 
-        Map<String, String> newConfig = new HashMap<>();
-        newConfig.put("user", "oldUser");
+        Map<NatsServerConfig, String> newConfig = new HashMap<>();
+        newConfig.put(USER, "oldUser");
         natsServer.setNatsServerConfig(newConfig);
-        assertThat(natsServer.getNatsServerConfig().get("user"), is(equalTo("oldUser")));
+        assertThat(natsServer.getNatsServerConfig().get(USER), is(equalTo("oldUser")));
     }
 
     @Test
     public void natsServer_invalidConfig_shouldNotRunIntroException() {
         NatsServer natsServer = new NatsServer();
-        natsServer.setNatsServerConfig("user:adminUser:password", " ", "onlyThis:isValid", "");
-        assertThat(natsServer.getNatsServerConfig().size(), is(1));
-        assertThat(natsServer.getNatsServerConfig().get("onlyThis"), is(equalTo("isValid")));
+        natsServer.setNatsServerConfig("user:adminUser:password", " ", "auth:isValid", "");
+        assertThat(natsServer.getNatsServerConfig().size(), is(22));
+        assertThat(natsServer.getNatsServerConfig().get(AUTH), is(equalTo("isValid")));
     }
 
     @Test
@@ -72,7 +78,7 @@ public class NatsServerWithoutAnnotationTest {
 
     @Test
     public void natsServer_withWrongConfig_shouldNotStartAndThrowException() throws IOException {
-        expectedException.expect(PortUnreachableException.class);
+        expectedException.expect(IllegalArgumentException.class);
         NatsServer natsServer = new NatsServer("unknown:config", "port:4232");
         natsServer.start();
     }
@@ -97,6 +103,36 @@ public class NatsServerWithoutAnnotationTest {
     @Test
     public void natsServer_stopWithoutStart_shouldNotRunIntroExceptionOrInterrupt() {
         NatsServer natsServer = new NatsServer();
+        natsServer.stop();
+    }
+
+    @Test
+    public void natsServer_withoutPort_shouldThrowMissingFormatArgumentException() {
+        NatsServer natsServer = new NatsServer();
+        natsServer.stop();
+    }
+
+    @Test
+    public void natsServer_withNullablePortValue_shouldThrowMissingFormatArgumentException() {
+        expectedException.expect(MissingFormatArgumentException.class);
+        NatsServer natsServer = new NatsServer();
+        natsServer.getNatsServerConfig().put(PORT, null);
+        natsServer.getPort();
+    }
+
+    @Test
+    public void natsServer_withNullableConfigValue_shouldNotRunIntroExceptionOrInterrupt() throws IOException {
+        NatsServer natsServer = new NatsServer(4236);
+        natsServer.getNatsServerConfig().put(MAX_AGE, null);
+        natsServer.start();
+        natsServer.stop();
+    }
+
+    @Test
+    public void natsServer_withInvalidConfigValue_shouldNotRunIntroExceptionOrInterrupt() throws IOException {
+        expectedException.expect(PortUnreachableException.class);
+        NatsServer natsServer = new NatsServer(MAX_AGE + ":invalidValue");
+        natsServer.start();
         natsServer.stop();
     }
 }
