@@ -2,3 +2,7 @@ logging:
   level:
     org.springframework: ERROR
     logging.level.yuna.berlin: INFO
+
+nats:
+  server:
+    hb_fail_count: 3
