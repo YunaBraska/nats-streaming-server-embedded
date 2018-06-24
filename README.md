@@ -21,12 +21,19 @@ public class SomeTest {
     [...]
 }
 ```
+* See [NatsServerConfig](https://github.com/YunaBraska/nats-streaming-server-embedded/blob/master/src/main/java/berlin/yuna/natsserver/config/NatsServerConfig.java) class for available properties
+* @EnableNatsServer is also reading spring config
+* @EnableNatsServer parameters are overwriting the spring properties
+```yaml
+nats:
+  server:
+    hb_fail_count: 3
+```
 
+```properties
+nats.server.hb_fail_count=3
+```
 ### TODO
-* calculate on adding parameter
-* Spring boot autoconfig for live usage
-* Parameter class with description
-* Read command errors for exceptions
 * Port issues on CI - Seems that the test context is restarting much faster than the ports are shutting down - at least some times
 
 ![nats-streaming-server-embedded](src/test/resources/banner.png "nats-streaming-server-embedded")

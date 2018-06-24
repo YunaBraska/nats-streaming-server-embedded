@@ -1,9 +1,15 @@
 package berlin.yuna.natsserver.util;
 
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import static berlin.yuna.natsserver.util.SystemUtil.OperatingSystem.ARM;
 import static berlin.yuna.natsserver.util.SystemUtil.OperatingSystem.LINUX;
@@ -20,11 +26,21 @@ public class SystemUtilTest {
 
     private final static String osName = System.getProperty("os.name");
     private final static String osArch = System.getProperty("os.arch");
+    private final static String javaTmpDir = System.getProperty("java.io.tmpdir");
+
+    private final String testFileOrigin = "banner.png";
+    private final File testFileCopy = new File(System.getProperty("java.io.tmpdir"), testFileOrigin);
+
+    @Before
+    public void setUp() throws Exception {
+        Files.deleteIfExists(testFileCopy.toPath());
+    }
 
     @After
     public void tearDown() {
         System.setProperty("os.name", osName);
         System.setProperty("os.arch", osArch);
+        System.setProperty("java.io.tmpdir", javaTmpDir);
     }
 
     @Test
@@ -74,6 +90,59 @@ public class SystemUtilTest {
     public void getOsType_withOtherOS_shouldReturnUnknown() {
         System.setProperty("os.name", "otherOth");
         assertThat(SystemUtil.getOsType(), is(UNKNOWN));
+    }
+
+    @Test
+    public void copyResourceFile_shouldBeSuccessful() {
+        Path outputPath = SystemUtil.copyResourceFile(testFileOrigin);
+        assertThat(outputPath, is(notNullValue()));
+    }
+
+    @Test
+    public void copyResourceFile_WithExistingFile_shouldBeSuccessful() {
+        Path outputPathFirst = SystemUtil.copyResourceFile(testFileOrigin);
+        Path outputPathSecond = SystemUtil.copyResourceFile(testFileOrigin);
+        assertThat(outputPathFirst, is(notNullValue()));
+        assertThat(outputPathSecond, is(notNullValue()));
+        assertThat(outputPathSecond, is(outputPathFirst));
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void copyResourceFile_WithOutPermission_shouldThrowRuntimeException() {
+        System.setProperty("java.io.tmpdir", "/tmp_removable/");
+        SystemUtil.copyResourceFile(testFileOrigin);
+    }
+
+    @Test
+    public void fixFilePermissions_shouldBeSuccessful() {
+        SystemUtil.fixFilePermissions(SystemUtil.copyResourceFile(testFileOrigin));
+    }
+
+    @Test
+    public void fixFilePermissions_WithNonExistingPath_shouldNotThrowException() throws IOException {
+        Path path = SystemUtil.copyResourceFile(testFileOrigin);
+        Files.deleteIfExists(path);
+        assertThat(path, is(notNullValue()));
+
+        SystemUtil.fixFilePermissions(path);
+    }
+
+    @Test
+    public void getCommandByOsType_withUnix_shouldBuildCorrectly() {
+        System.setProperty("os.name", "linux");
+        String[] command = SystemUtil.getCommandByOsType("ls");
+
+        assertThat(command, is(notNullValue()));
+        assertThat(command, is(new String[]{"sh", "-c", "ls"}));
+    }
+
+    @Test
+    public void getCommandByOsType_withWindows_shouldBuildCorrectly() {
+        System.setProperty("os.name", "MsDos Windows 3.1");
+        String[] command = SystemUtil.getCommandByOsType("dir");
+
+        assertThat(command, is(notNullValue()));
+        assertThat(command, is(new String[]{"cmd.exe", "/c", "dir"}));
     }
 
     @Test
