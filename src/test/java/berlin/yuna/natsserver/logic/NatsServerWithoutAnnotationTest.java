@@ -131,7 +131,7 @@ public class NatsServerWithoutAnnotationTest {
     @Test
     public void natsServer_withInvalidConfigValue_shouldNotRunIntroExceptionOrInterrupt() throws IOException {
         expectedException.expect(PortUnreachableException.class);
-        NatsServer natsServer = new NatsServer(MAX_AGE + ":invalidValue");
+        NatsServer natsServer = new NatsServer(MAX_AGE + ":invalidValue", PORT + ":4237");
         natsServer.start();
         natsServer.stop();
     }
