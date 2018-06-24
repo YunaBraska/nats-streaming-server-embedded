@@ -49,6 +49,7 @@ public @interface EnableNatsServer {
 
     /**
      * Passes the original parameters to {@link NatsServer#setNatsServerConfig(String...)} for startup
+     * {@link berlin.yuna.natsserver.config.NatsServerConfig}
      */
     String[] natsServerConfig() default {};
 
