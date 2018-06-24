@@ -115,7 +115,7 @@
     },
     {
       "sourceType": "berlin.yuna.natsserver.config.NatsServerConfig",
-      "defaultValue": "a2dc47d6-369b-4679-b9ae-837d77487346",
+      "defaultValue": "a519c811-a3b2-4c7f-a58a-79af4b565db3",
       "name": "nats.server.cluster_node_id",
       "type": "java.lang.String",
       "description": "ID of the node within the cluster if there is no stored ID (default: random UUID)"
