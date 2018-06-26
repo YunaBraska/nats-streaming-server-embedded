@@ -1,8 +1,6 @@
 package berlin.yuna.natsserver.logic;
 
 import berlin.yuna.natsserver.config.NatsServerConfig;
-import berlin.yuna.natsserver.util.SystemUtil;
-import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;

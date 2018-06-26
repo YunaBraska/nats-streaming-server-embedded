@@ -2,7 +2,6 @@ package berlin.yuna.natsserver.logic;
 
 import berlin.yuna.natsserver.config.NatsServerConfig;
 import berlin.yuna.natsserver.util.StreamGobbler;
-import berlin.yuna.natsserver.util.SystemUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;

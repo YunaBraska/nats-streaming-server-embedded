@@ -58,7 +58,7 @@ public class SystemUtil {
 
     public static Process executeCommand(String command) throws IOException {
         ProcessBuilder builder = new ProcessBuilder();
-            builder.command(getCommandByOsType(command));
+        builder.command(getCommandByOsType(command));
         return builder.start();
     }
 
