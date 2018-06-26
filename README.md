@@ -13,7 +13,7 @@ Embedded [Nats streaming server](https://github.com/nats-io/nats-streaming-serve
 
 ### Usage
 * One annotation to setup the powerful [Nats streaming server](https://github.com/nats-io/nats-streaming-server)
-```
+```java
 @SpringBootTest
 @RunWith(SpringRunner.class)
 @EnableNatsServer(port = 4222, natsServerConfig = {"user:admin", "password:admin"})

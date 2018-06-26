@@ -9,9 +9,9 @@ public enum NatsServerConfig {
     STORE("MEMORY", "[STRING] Store type: MEMORY|FILE (default: MEMORY)"),
     DIR(null, "[STRING] For FILE store type, this is the root directory"),
     MAX_CHANNELS("0", "[INT] Max number of channels (0 for unlimited)"),
-    MAX_SUBS("0", "[INT] Max number of subscriptions per channel (0 for unlimited)"),
-    MAX_MSGS("0", "[INT] Max number of messages per channel (0 for unlimited)"),
-    MAX_BYTES("0", "[SIZE] Max messages total size per channel (0 for unlimited)"),
+    MAX_SUBS(0, "[INT] Max number of subscriptions per channel (0 for unlimited)"),
+    MAX_MSGS(0, "[INT] Max number of messages per channel (0 for unlimited)"),
+    MAX_BYTES(0L, "[SIZE] Max messages total size per channel (0 for unlimited)"),
     MAX_AGE("0s", "[DURATION] Max duration a message can be stored (\"0s\" for unlimited)"),
     MAX_INACTIVITY("0", "[DURATION] Max inactivity (no new message, no subscription) after which a channel can be garbage collected (0 for unlimited)"),
     NATS_SERVER(null, "[STRING] Connect to this external NATS Server URL (embedded otherwise)"),
@@ -51,7 +51,7 @@ public enum NatsServerConfig {
 
     //Streaming Server SQL Store Options
     SQL_DRIVER(null, "[STRING] Name of the SQL Driver (\"mysql\" or \"postgres\")"),
-    SQL_DATA_SOURCE(null, "[STRING] Datasource used when opening an SQL connection to the database"),
+    SQL_SOURCE(null, "[STRING] Datasource used when opening an SQL connection to the database"),
     SQL_NO_CACHING(null, "[BOOL] Enable/Disable caching for improved performance"),
     SQL_MAX_OPEN_CONNS(null, "[INT] Maximum number of opened connections to the database"),
 
@@ -62,12 +62,12 @@ public enum NatsServerConfig {
     TLS_CLIENT_CACERT(null, "-[STRING] Client certificate CA for the streaming server"),
 
     //Streaming Server Logging Options
-    STAN_DEBUG("false", "[BOOL] Enable STAN debugging output"),
-    STAN_TRACE("false", "[BOOL] Trace the raw STAN protocol"),
+    STAN_DEBUG(false, "[BOOL] Enable STAN debugging output"),
+    STAN_TRACE(false, "[BOOL] Trace the raw STAN protocol"),
 
     //NATS Server Options
     ADDR("0.0.0.0", "[STRING] Bind to host address (default: 0.0.0.0)"),
-    PORT("4222", "[INT] Use port for clients (default: 4222)"),
+    PORT(4222, "[INT] Use port for clients (default: 4222)"),
     PID(null, "[STRING] File to store PID"),
     HTTP_PORT(null, "[INT] Use port for http monitoring"),
     HTTPS_PORT(null, "[INT] Use port for https monitoring"),
@@ -75,11 +75,11 @@ public enum NatsServerConfig {
 
     //NATS Server Logging Options
     LOG(null, "[STRING] File to redirect log output"),
-    LOGTIME("true", "[BOOL] Timestamp log entries (default: true)"),
+    LOGTIME(true, "[BOOL] Timestamp log entries (default: true)"),
     SYSLOG(null, "[STRING] Enable syslog as log method"),
     REMOTE_SYSLOG(null, "[STRING] Syslog server addr (udp://localhost:514)"),
-    DEBUG("false", "[BOOL] Enable debugging output"),
-    TRACE("false", "[BOOL] Trace the raw protocol"),
+    DEBUG(false, "[BOOL] Enable debugging output"),
+    TRACE(false, "[BOOL] Trace the raw protocol"),
 
     //NATS Server Authorization Options
     USER(null, "[STRING] User required for connections"),
@@ -87,8 +87,9 @@ public enum NatsServerConfig {
     AUTH(null, "[STRING] Authorization token required for connections"),
 
     //TLS Options
-    TLS("false", "[BOOL] Enable TLS, do not verify clients (default: false)"),
+    TLS(false, "[BOOL] Enable TLS, do not verify clients (default: false)"),
     TLSCERT(null, "[STRING] Server certificate file"),
+    TLSKEY(null, "[STRING] Private key for server certificate"),
     TLSVERIFY(null, "[BOOL] Enable TLS, verify client certificates"),
     TLSCACERT(null, "[STRING] Client certificate CA for verification"),
 
@@ -96,15 +97,15 @@ public enum NatsServerConfig {
     ROUTES(null, "[STRING] Routes to solicit and connect"),
     CLUSTER(null, "[STRING] Cluster URL for solicited routes");
 
-    private final String defaultValue;
+    private final Object defaultValue;
     private final String description;
 
-    NatsServerConfig(String defaultValue, String description) {
+    NatsServerConfig(Object defaultValue, String description) {
         this.defaultValue = defaultValue;
         this.description = description;
     }
 
-    public String getDefaultValue() {
+    public Object getDefaultValue() {
         return defaultValue;
     }
 

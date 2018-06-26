@@ -55,7 +55,6 @@ public class EnableNatsServerContextCustomizer implements ContextCustomizer {
             natsServerBean.start();
         } catch (Exception e) {
             throw new IllegalArgumentException("Failed to initialise " +  EnableNatsServer.class.getSimpleName(), e);
-//            LOG.error("Failed to initialise [{}]", EnableNatsServer.class.getSimpleName(), e);
         }
 
         beanFactory.initializeBean(natsServerBean, NatsServer.BEAN_NAME);

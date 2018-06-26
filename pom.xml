@@ -56,6 +56,12 @@
             <version>2.8.5</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>berlin.yuna</groupId>
+            <artifactId>config-metadata-generator</artifactId>
+            <version>0.2.0</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <scm>
