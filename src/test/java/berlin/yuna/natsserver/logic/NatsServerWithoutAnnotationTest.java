@@ -21,6 +21,8 @@ import static berlin.yuna.natsserver.config.NatsServerConfig.MAX_AGE;
 import static berlin.yuna.natsserver.config.NatsServerConfig.PASS;
 import static berlin.yuna.natsserver.config.NatsServerConfig.PORT;
 import static berlin.yuna.natsserver.config.NatsServerConfig.USER;
+import static berlin.yuna.natsserver.util.SystemUtil.OperatingSystem.WINDOWS;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -36,10 +38,11 @@ public class NatsServerWithoutAnnotationTest {
         new Socket("localhost", 4222).close();
     }
 
-    public void natsServer_withoutConfig_shouldNotStart() throws Exception {
-        expectedException.expect(RuntimeException.class);
-        expectedException.expectMessage("ServiceConfigurationError");
-        new NatsServer().start();
+    @Test
+    public void natsServer_withoutConfig_shouldStartWithDefaultValues() throws Exception {
+        NatsServer natsServer = new NatsServer(4238);
+        natsServer.start();
+        natsServer.stop();
     }
 
     @Test
@@ -134,5 +137,12 @@ public class NatsServerWithoutAnnotationTest {
         NatsServer natsServer = new NatsServer(MAX_AGE + ":invalidValue", PORT + ":4237");
         natsServer.start();
         natsServer.stop();
+    }
+
+    @Test
+    public void natsServerOnWindows_shouldAddExeToPath() {
+        String windowsNatsServerPath = new NatsServer().getNatsServerPath(WINDOWS).toString();
+        String expectedExe = NatsServer.BEAN_NAME.toLowerCase() + ".exe";
+        assertThat(windowsNatsServerPath, containsString(expectedExe));
     }
 }
