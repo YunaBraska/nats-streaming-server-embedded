@@ -40,7 +40,7 @@ public class NatsServerWithoutAnnotationTest {
 
     @Test
     public void natsServer_withoutConfig_shouldStartWithDefaultValues() throws Exception {
-        NatsServer natsServer = new NatsServer();
+        NatsServer natsServer = new NatsServer(4238);
         natsServer.start();
         natsServer.stop();
     }
