@@ -128,7 +128,7 @@ public class NatsServer implements DisposableBean {
             throw new BindException("Address already in use [" + getPort() + "]");
         }
 
-        Path natsServerPath = getNatsServerPath();
+        Path natsServerPath = getNatsServerPath(OPERATING_SYSTEM);
         LOG.info("Starting [{}] port [{}] version [{}-{}]", BEAN_NAME, getPort(), NATS_SERVER_VERSION, OPERATING_SYSTEM);
 
         String command = prepareCommand(natsServerPath);
@@ -192,12 +192,12 @@ public class NatsServer implements DisposableBean {
      *
      * @return Resource/{SIMPLE_CLASS_NAME}/{NATS_SERVER_VERSION}/{OPERATING_SYSTEM}/{SIMPLE_CLASS_NAME}
      */
-    private Path getNatsServerPath() {
+    Path getNatsServerPath(OperatingSystem operatingSystem) {
         StringBuilder relativeResource = new StringBuilder();
         relativeResource.append(BEAN_NAME.toLowerCase()).append(File.separator);
         relativeResource.append(NATS_SERVER_VERSION).append(File.separator);
-        relativeResource.append(OPERATING_SYSTEM.toString().toLowerCase()).append(File.separator);
-        relativeResource.append(BEAN_NAME.toLowerCase()).append((OPERATING_SYSTEM == WINDOWS ? ".exe" : ""));
+        relativeResource.append(operatingSystem.toString().toLowerCase()).append(File.separator);
+        relativeResource.append(BEAN_NAME.toLowerCase()).append((operatingSystem == WINDOWS ? ".exe" : ""));
         return copyResourceFile(relativeResource.toString());
     }
 
@@ -246,7 +246,7 @@ public class NatsServer implements DisposableBean {
         Map<NatsServerConfig, String> defaultConfig = new HashMap<>();
         for (NatsServerConfig natsServerConfig : NatsServerConfig.values()) {
             if (natsServerConfig.getDefaultValue() != null) {
-                defaultConfig.put(natsServerConfig, natsServerConfig.getDefaultValue());
+                defaultConfig.put(natsServerConfig, natsServerConfig.getDefaultValue().toString());
             }
         }
         return defaultConfig;
