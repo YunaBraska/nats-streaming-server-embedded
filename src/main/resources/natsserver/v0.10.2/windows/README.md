@@ -29,6 +29,7 @@ NATS Streaming provides the following high-level feature set.
         * [Supported Stores](#supported-stores)
         * [Clustering Configuration](#clustering-configuration)
         * [Clustering Auto Configuration](#clustering-auto-configuration)
+        * [Clustering And Containers](#clustering-and-containers)
     * [Fault Tolerance](#fault-tolerance)
         * [Active Server](#active-server)
         * [Standby Servers](#standby-servers)
@@ -53,12 +54,45 @@ NATS Streaming provides the following high-level feature set.
     * [Persistence](#persistence)
         * [File Store](#file-store)
             * [File Store Options](#file-store-options)
+            * [File Store Recovery Errors](#file-store-recovery-errors)
         * [SQL Store](#sql-store)
             * [SQL Store Options](#sql-store-options)
 - [Clients](#clients)
 - [License](#license)
 
 # Important Changes
+
+## Version `0.10.0`
+
+The server needs to persist more state for a client connection. Therefore, the Store interface has been changed:
+
+* Changed `AddClient(clientID, hbInbox string)` to `AddClient(info *spb.ClientInfo)`
+
+For SQL Stores, the `Clients` table has been altered to add a `proto` column.<br>
+You can update the SQL table manually or run the provided scripts that create the tables if they don't exists
+and alter the `Clients` table adding the new column. For instance, with MySQL, you would run something similar to:
+
+```
+mysql -u root nss_db < mysql.db.sql
+```
+The above assumes you are in the NATS Streaming Server directory, and the streaming database is called `nss_db`.
+
+Otherwise, from the mysql CLI, you can run the command:
+```
+mysql> alter table Clients add proto blob;
+Query OK, 0 rows affected (0.05 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+```
+For Postgres, it would be:
+```
+nss_db=# alter table Clients add proto bytea;
+ALTER TABLE
+```
+
+If you run the server version with `0.10.0` a database that has not been updated, you would get the following error:
+```
+[FTL] STREAM: Failed to start: unable to prepare statement "INSERT INTO Clients (id, hbinbox, proto) VALUES (?, ?, ?)": Error 1054: Unknown column 'proto' in 'field list'
+```
 
 ## Version `0.9.0`
 
@@ -232,8 +266,10 @@ After the first queue member is created, any other member joining the group will
 When the last member of the group leaves (subscription unsubscribed/closed/or connection closed), the group is removed from the server.
 The next application creating a subscription with the same name will create a new group, starting at the start position given in the subscription request.
 
-Queue subscriptions can also be durables. In this case, the client provides also a durable name. The behavior is, as you would expect,
-a combination of queue and durable subscriptions. The main difference is that when the last member leaves the group, the state of
+A queue subscription can also be durable. For that, the client needs to provide a queue and durable name. The behavior is, as you would expect,
+a combination of queue and durable subscription. Unlike a durable subscription, though, the client ID is not part of the queue group name.
+It makes sense, because since client ID must be unique, it would prevent more than one connection to participate in the queue group.
+The main difference between a queue subscription and a durable one, is that when the last member leaves the group, the state of
 the group will be maintained by the server. Later, when a member rejoins the group, the delivery will resume.
 
 ***Note: For a durable queue subscription, the last member to * unsubscribe * (not simply close) causes the group to  be removed from the server.***
@@ -455,6 +491,21 @@ The very first server that bootstrapped the cluster can be restarted, however, t
 <b>must remove the datastores</b> of the other servers that were incorrectly started with
 the bootstrap parameter before attempting to restart them. If they are restarted -even without the
 `-cluster_bootstrap` parameter- but with existing state, they will once again start as a leader.
+
+### Clustering And Containers
+
+When running the docker image of NATS Streaming Server, you will want to specify a mounted volume so that the data can be recovered.
+Your `-dir` parameter then points to a directory inside that mounted volume. However, after a restart you may get a failure with a message
+similar to this:
+```
+[FTL] STREAM: Failed to start: streaming state was recovered but cluster log path "mycluster/a" is empty
+```
+This is because the server recovered the streaming state (as pointed by `-dir` and located in the mounted volume), but did
+not recover the RAFT specific state that is by default stored in a directory named after your cluster id, relative to the
+current directory starting the executable. In the context of a container, this data will be lost after the container is stopped.
+
+In order to avoid this issue, you need to specify the `-cluster_log_path` and ensure that it points to the mounted volume so
+that the RAFT state can be recovered along with the Streaming state.
 
 ## Fault Tolerance
 
@@ -708,18 +759,18 @@ various general statistics.
 ```
 {
   "cluster_id": "test-cluster",
-  "server_id": "N3eKeawmVEMruZQeQ1zxGq",
-  "version": "0.9.2",
-  "go": "go1.10.1",
+  "server_id": "KX1Y9BA1M7cPjLhZ7rldxm",
+  "version": "0.10.0",
+  "go": "go1.10.3",
   "state": "STANDALONE",
-  "now": "2018-04-03T10:04:46.593217956-06:00",
-  "start_time": "2018-04-03T10:01:04.2744843-06:00",
-  "uptime": "3m42s",
-  "clients": 11,
-  "subscriptions": 20,
+  "now": "2018-06-19T15:05:18.270880488-06:00",
+  "start_time": "2018-06-19T15:04:48.730926175-06:00",
+  "uptime": "29s",
+  "clients": 20,
+  "subscriptions": 10,
   "channels": 1,
-  "total_msgs": 65093,
-  "total_bytes": 9812533
+  "total_msgs": 191474,
+  "total_bytes": 28704590
 }
 ```
 
@@ -1034,27 +1085,25 @@ The NATS Streaming Server embeds a NATS Server. Starting the server with no argu
 
 ```
 > ./nats-streaming-server
-[55098] 2018/04/03 10:01:04.274505 [INF] STREAM: Starting nats-streaming-server[test-cluster] version 0.9.2
-[55098] 2018/04/03 10:01:04.274566 [INF] STREAM: ServerID: N3eKeawmVEMruZQeQ1zxGq
-[55098] 2018/04/03 10:01:04.274579 [INF] STREAM: Go version: go1.9.5
-[55098] 2018/04/03 10:01:04.275160 [INF] Starting nats-server version 1.0.7
-[55098] 2018/04/03 10:01:04.275169 [INF] Git commit [not set]
-[55098] 2018/04/03 10:01:04.275354 [INF] Starting http monitor on 0.0.0.0:8222
-[55098] 2018/04/03 10:01:04.275396 [INF] Listening for client connections on 0.0.0.0:4222
-[55098] 2018/04/03 10:01:04.275401 [INF] Server is ready
-[55098] 2018/04/03 10:01:04.302360 [INF] STREAM: Recovering the state...
-[55098] 2018/04/03 10:01:04.302384 [INF] STREAM: No recovered state
-[55098] 2018/04/03 10:01:04.558001 [INF] STREAM: Message store is MEMORY
-[55098] 2018/04/03 10:01:04.558067 [INF] STREAM: ---------- Store Limits ----------
-[55098] 2018/04/03 10:01:04.558072 [INF] STREAM: Channels:                  100 *
-[55098] 2018/04/03 10:01:04.558074 [INF] STREAM: --------- Channels Limits --------
-[55098] 2018/04/03 10:01:04.558077 [INF] STREAM:   Subscriptions:          1000 *
-[55098] 2018/04/03 10:01:04.558080 [INF] STREAM:   Messages     :       1000000 *
-[55098] 2018/04/03 10:01:04.558083 [INF] STREAM:   Bytes        :     976.56 MB *
-[55098] 2018/04/03 10:01:04.558085 [INF] STREAM:   Age          :     unlimited *
-[55098] 2018/04/03 10:01:04.558088 [INF] STREAM:   Inactivity   :     unlimited *
-[55098] 2018/04/03 10:01:04.558091 [INF] STREAM: ----------------------------------
-[55098] 2018/04/03 10:03:26.330176 [INF] STREAM: Channel "test" has been created
+[74061] 2018/06/19 15:02:06.651753 [INF] STREAM: Starting nats-streaming-server[test-cluster] version 0.10.0
+[74061] 2018/06/19 15:02:06.651825 [INF] STREAM: ServerID: W5wgIzTuosTd5nnsjSE7F2
+[74061] 2018/06/19 15:02:06.651829 [INF] STREAM: Go version: go1.10.3
+[74061] 2018/06/19 15:02:06.652442 [INF] Starting nats-server version 1.1.0
+[74061] 2018/06/19 15:02:06.652450 [INF] Git commit [not set]
+[74061] 2018/06/19 15:02:06.652620 [INF] Listening for client connections on 0.0.0.0:4222
+[74061] 2018/06/19 15:02:06.652626 [INF] Server is ready
+[74061] 2018/06/19 15:02:06.684389 [INF] STREAM: Recovering the state...
+[74061] 2018/06/19 15:02:06.684439 [INF] STREAM: No recovered state
+[74061] 2018/06/19 15:02:06.936803 [INF] STREAM: Message store is MEMORY
+[74061] 2018/06/19 15:02:06.936885 [INF] STREAM: ---------- Store Limits ----------
+[74061] 2018/06/19 15:02:06.936893 [INF] STREAM: Channels:                  100 *
+[74061] 2018/06/19 15:02:06.936898 [INF] STREAM: --------- Channels Limits --------
+[74061] 2018/06/19 15:02:06.936903 [INF] STREAM:   Subscriptions:          1000 *
+[74061] 2018/06/19 15:02:06.936908 [INF] STREAM:   Messages     :       1000000 *
+[74061] 2018/06/19 15:02:06.936913 [INF] STREAM:   Bytes        :     976.56 MB *
+[74061] 2018/06/19 15:02:06.936918 [INF] STREAM:   Age          :     unlimited *
+[74061] 2018/06/19 15:02:06.936923 [INF] STREAM:   Inactivity   :     unlimited *
+[74061] 2018/06/19 15:02:06.936927 [INF] STREAM: ----------------------------------
 ```
 
 The server will be started and listening for client connections on port 4222 (the default) from all available interfaces. The logs will be displayed to stderr as shown above.
@@ -1194,7 +1243,7 @@ Usage: nats-streaming-server [options]
 
 Streaming Server Options:
     -cid, --cluster_id  <string>      Cluster ID (default: test-cluster)
-    -st,  --store <string>            Store type: MEMORY|FILE (default: MEMORY)
+    -st,  --store <string>            Store type: MEMORY|FILE|SQL (default: MEMORY)
           --dir <string>              For FILE store type, this is the root directory
     -mc,  --max_channels <int>        Max number of channels (0 for unlimited)
     -msu, --max_subs <int>            Max number of subscriptions per channel (0 for unlimited)
@@ -1236,6 +1285,7 @@ Streaming Server File Store Options:
     --file_slice_archive_script <string> Path to script to use if you want to archive a file slice being removed
     --file_fds_limit <int>               Store will try to use no more file descriptors than this given limit
     --file_parallel_recovery <int>       On startup, number of channels that can be recovered in parallel
+    --file_truncate_bad_eof <bool>       Truncate files for which there is an unexpected EOF on recovery, dataloss may occur
 
 Streaming Server SQL Store Options:
     --sql_driver <string>            Name of the SQL Driver ("mysql" or "postgres")
@@ -1348,7 +1398,7 @@ In general the configuration parameters are the same as the command line argumen
 |:----|:----|:----|:----|
 | cluster_id | Cluster name | String, underscore possible | `cluster_id: "my_cluster_name"` |
 | discover_prefix | Subject prefix for server discovery by clients | NATS Subject | `discover_prefix: "_STAN.Discovery"` |
-| store | Store type | `file` or `memory` | `store: "file"` |
+| store | Store type | `memory`, `file` or `sql` | `store: "file"` |
 | dir | When using a file store, this is the root directory | File path | `dir: "/path/to/storage` |
 | sd | Enable debug logging | `true` or `false` | `sd: true` |
 | sv | Enable trace logging | `true` or `false` | `sv: true` |
@@ -1560,41 +1610,41 @@ Below is what would be displayed with the above store limits configuration. Noti
 how `foo.bar.>` is indented compared to `foo.>` to show the inheritance.
 
 ```
-[55387] 2018/04/03 10:07:29.270145 [INF] STREAM: Starting nats-streaming-server[test-cluster] version 0.9.2
-[55387] 2018/04/03 10:07:29.270205 [INF] STREAM: ServerID: pYej9bsLFR1Px0CEUxOtNF
-[55387] 2018/04/03 10:07:29.270207 [INF] STREAM: Go version: go1.10.1
-[55387] 2018/04/03 10:07:29.270818 [INF] Starting nats-server version 1.0.7
-[55387] 2018/04/03 10:07:29.270827 [INF] Git commit [not set]
-[55387] 2018/04/03 10:07:29.271023 [INF] Starting http monitor on 0.0.0.0:8222
-[55387] 2018/04/03 10:07:29.271073 [INF] Listening for client connections on 0.0.0.0:4222
-[55387] 2018/04/03 10:07:29.271082 [INF] Server is ready
-[55387] 2018/04/03 10:07:29.300330 [INF] STREAM: Recovering the state...
-[55387] 2018/04/03 10:07:29.300354 [INF] STREAM: No recovered state
-[55387] 2018/04/03 10:07:29.553795 [INF] STREAM: Message store is MEMORY
-[55387] 2018/04/03 10:07:29.554019 [INF] STREAM: ---------- Store Limits ----------
-[55387] 2018/04/03 10:07:29.554032 [INF] STREAM: Channels:                   10
-[55387] 2018/04/03 10:07:29.554037 [INF] STREAM: --------- Channels Limits --------
-[55387] 2018/04/03 10:07:29.554042 [INF] STREAM:   Subscriptions:          1000 *
-[55387] 2018/04/03 10:07:29.554048 [INF] STREAM:   Messages     :         10000
-[55387] 2018/04/03 10:07:29.554052 [INF] STREAM:   Bytes        :      10.00 MB
-[55387] 2018/04/03 10:07:29.554057 [INF] STREAM:   Age          :        1h0m0s
-[55387] 2018/04/03 10:07:29.554062 [INF] STREAM:   Inactivity   :     unlimited *
-[55387] 2018/04/03 10:07:29.554067 [INF] STREAM: -------- List of Channels ---------
-[55387] 2018/04/03 10:07:29.554072 [INF] STREAM: baz
-[55387] 2018/04/03 10:07:29.554077 [INF] STREAM:  |-> Messages             unlimited
-[55387] 2018/04/03 10:07:29.554082 [INF] STREAM:  |-> Bytes                  1.00 MB
-[55387] 2018/04/03 10:07:29.554087 [INF] STREAM:  |-> Age                     2h0m0s
-[55387] 2018/04/03 10:07:29.554092 [INF] STREAM: bozo
-[55387] 2018/04/03 10:07:29.554097 [INF] STREAM: foo.>
-[55387] 2018/04/03 10:07:29.554239 [INF] STREAM:  |-> Messages                   400
-[55387] 2018/04/03 10:07:29.554253 [INF] STREAM:  foo.bar.>
-[55387] 2018/04/03 10:07:29.554259 [INF] STREAM:   |-> Age                    2h0m0s
-[55387] 2018/04/03 10:07:29.554264 [INF] STREAM: temp.>
-[55387] 2018/04/03 10:07:29.554269 [INF] STREAM:  |-> Inactivity              1h0m0s
-[55387] 2018/04/03 10:07:29.554274 [INF] STREAM: bar
-[55387] 2018/04/03 10:07:29.554280 [INF] STREAM:  |-> Messages                    50
-[55387] 2018/04/03 10:07:29.554285 [INF] STREAM:  |-> Bytes                  1.00 KB
-[55387] 2018/04/03 10:07:29.554289 [INF] STREAM: -----------------------------------
+[74149] 2018/06/19 15:03:43.813111 [INF] STREAM: Starting nats-streaming-server[test-cluster] version 0.10.0
+[74149] 2018/06/19 15:03:43.813172 [INF] STREAM: ServerID: 2EUbn39EhaBf7mnFEjE9eZ
+[74149] 2018/06/19 15:03:43.813175 [INF] STREAM: Go version: go1.10.3
+[74149] 2018/06/19 15:03:43.813795 [INF] Starting nats-server version 1.1.0
+[74149] 2018/06/19 15:03:43.813836 [INF] Git commit [not set]
+[74149] 2018/06/19 15:03:43.813927 [INF] Starting http monitor on 0.0.0.0:8222
+[74149] 2018/06/19 15:03:43.813990 [INF] Listening for client connections on 0.0.0.0:4222
+[74149] 2018/06/19 15:03:43.813996 [INF] Server is ready
+[74149] 2018/06/19 15:03:43.840457 [INF] STREAM: Recovering the state...
+[74149] 2018/06/19 15:03:43.840482 [INF] STREAM: No recovered state
+[74149] 2018/06/19 15:03:44.096154 [INF] STREAM: Message store is MEMORY
+[74149] 2018/06/19 15:03:44.096337 [INF] STREAM: ---------- Store Limits ----------
+[74149] 2018/06/19 15:03:44.096346 [INF] STREAM: Channels:                   10
+[74149] 2018/06/19 15:03:44.096352 [INF] STREAM: --------- Channels Limits --------
+[74149] 2018/06/19 15:03:44.096357 [INF] STREAM:   Subscriptions:          1000 *
+[74149] 2018/06/19 15:03:44.096362 [INF] STREAM:   Messages     :         10000
+[74149] 2018/06/19 15:03:44.096367 [INF] STREAM:   Bytes        :      10.00 MB
+[74149] 2018/06/19 15:03:44.096372 [INF] STREAM:   Age          :        1h0m0s
+[74149] 2018/06/19 15:03:44.096377 [INF] STREAM:   Inactivity   :     unlimited *
+[74149] 2018/06/19 15:03:44.096382 [INF] STREAM: -------- List of Channels ---------
+[74149] 2018/06/19 15:03:44.096386 [INF] STREAM: baz
+[74149] 2018/06/19 15:03:44.096391 [INF] STREAM:  |-> Messages             unlimited
+[74149] 2018/06/19 15:03:44.096396 [INF] STREAM:  |-> Bytes                  1.00 MB
+[74149] 2018/06/19 15:03:44.096401 [INF] STREAM:  |-> Age                     2h0m0s
+[74149] 2018/06/19 15:03:44.096406 [INF] STREAM: bozo
+[74149] 2018/06/19 15:03:44.096411 [INF] STREAM: foo.>
+[74149] 2018/06/19 15:03:44.096416 [INF] STREAM:  |-> Messages                   400
+[74149] 2018/06/19 15:03:44.096420 [INF] STREAM:  foo.bar.>
+[74149] 2018/06/19 15:03:44.096425 [INF] STREAM:   |-> Age                    2h0m0s
+[74149] 2018/06/19 15:03:44.096430 [INF] STREAM: temp.>
+[74149] 2018/06/19 15:03:44.096439 [INF] STREAM:  |-> Inactivity              1h0m0s
+[74149] 2018/06/19 15:03:44.096445 [INF] STREAM: bar
+[74149] 2018/06/19 15:03:44.096450 [INF] STREAM:  |-> Messages                    50
+[74149] 2018/06/19 15:03:44.096454 [INF] STREAM:  |-> Bytes                  1.00 KB
+[74149] 2018/06/19 15:03:44.096459 [INF] STREAM: -----------------------------------
 ```
 
 
@@ -1731,6 +1781,58 @@ the option `fds_limit` (or command line parameter `--file_fds_limit`) may be con
 Note that this is a soft limit. It is possible for the store to use more file descriptors than the given limit if the
 number of concurrent read/writes to different channels is more than the said limit. It is also understood that this
 may affect performance since files may need to be closed/re-opened as needed.
+
+#### File Store Recovery Errors
+
+We have added the ability for the server to truncate any file that may otherwise report an `unexpected EOF`
+error during the recovery process.
+
+Since dataloss is likely to occur, the default behavior for the server on startup is to report recovery error and stop.
+It will now print the content of the first corrupted record before exiting.
+
+With the `-file_truncate_bad_eof` parameter, the server will still print those bad records but truncate each file at
+the position of the first corrupted record in order to successfully start.
+
+To prevent the use of this parameter as the default value, this option is not available in the configuration file.
+Moreover, the server will fail to start if started more than once with that parameter.<br>
+This flag may help recover from a store failure, but since data may be lost in that process, we think that the
+operator needs to be aware and make an informed decision.
+
+Note that this flag will not help with file corruption due to bad CRC for instance. You have the option to disable
+CRC on recovery with the `-file_crc=false` option.
+
+Let's review the impact and suggested steps for each of the server's corrupted files:
+
+* `server.dat`: This file contains meta data and NATS subjects used to communicate with client applications. If
+a corruption is reported with this file, we would suggest that you stop all your clients, stop the server, remove
+this file, restart the server. This will create a new `server.dat` file, but will not attempt to recover the
+rest of the channels because the server assumes that there is no state. So you should stop and restart the
+server once more. Then, you can restart all your clients.
+
+* `clients.dat`: This contains information about client connections. If the file is truncated to move past
+an `unexpected EOF` error, this can result in no issue at all, or in client connections not being recovered,
+which means that the server will not know about possible running clients, and therefore it will not try
+to deliver any message to those non recovered clients, or reject incoming published messages from those clients.
+It is also possible that the server recovers a client connection that was actually closed. In this case, the
+server may attempt to deliver or redeliver messages unnecessarily.
+
+* `subs.dat`: This is a channel's subscriptions file (under the channel's directory). If this file is truncated
+and some records are lost, it may result in no issue at all, or in client applications not receiving their messages
+since the server will not know about them. It is also possible that acknowledged messages get redelivered
+(since their ack may have been lost).
+
+* `msgs.<n>.dat`: This is a channel's message log (several per channel). If one of those files is truncated, then
+message loss occurs. With the `unexpected EOF` errors, it is likely that only the last "file slice" of a channel will
+be affected. Nevertheless, if a lower sequence file slice is truncated, then gaps in message sequence will occur.
+So it would be possible for a channel to have now messages 1..100, 110..300 for instance, with messages 101 to 109
+missing. Again, this is unlikely since we expect the unexpected end-of-file errors to occur on the last slice.
+
+For *Clustered* mode, this flag would work only for the NATS Streaming specific store files. As you know, NATS
+Streaming uses RAFT for consensus, and RAFT uses its own logs. You could try the option if the server reports
+`unexpected EOF` errors for NATS Streaming file stores, however, you may want to simply delete all NATS Streaming
+and RAFT stores for the failed node and restart it. By design, the other nodes in the cluster have replicated the
+data, so this node will become a follower and catchup with the rest of the cluster, getting the data from the
+current leader and recreating its local stores.
 
 ### SQL Store
 
