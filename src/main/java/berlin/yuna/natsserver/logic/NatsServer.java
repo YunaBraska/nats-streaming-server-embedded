@@ -4,7 +4,6 @@ import berlin.yuna.natsserver.config.NatsServerConfig;
 import berlin.yuna.system.logic.SystemUtil;
 import berlin.yuna.system.logic.SystemUtil.OperatingSystem;
 import berlin.yuna.system.logic.Terminal;
-import berlin.yuna.system.util.StreamGobbler;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.util.StringUtils;
@@ -16,16 +15,22 @@ import java.net.ConnectException;
 import java.net.PortUnreachableException;
 import java.net.Socket;
 import java.nio.file.Path;
+import java.nio.file.attribute.PosixFilePermission;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.MissingFormatArgumentException;
-import java.util.concurrent.Executors;
 
 import static berlin.yuna.natsserver.config.NatsServerConfig.PORT;
 import static berlin.yuna.system.logic.SystemUtil.OperatingSystem.WINDOWS;
 import static berlin.yuna.system.logic.SystemUtil.getOsType;
 import static berlin.yuna.system.logic.SystemUtil.killProcessByName;
+import static java.nio.file.attribute.PosixFilePermission.OTHERS_EXECUTE;
+import static java.nio.file.attribute.PosixFilePermission.OTHERS_READ;
+import static java.nio.file.attribute.PosixFilePermission.OTHERS_WRITE;
+import static java.nio.file.attribute.PosixFilePermission.OWNER_EXECUTE;
+import static java.nio.file.attribute.PosixFilePermission.OWNER_READ;
+import static java.nio.file.attribute.PosixFilePermission.OWNER_WRITE;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.util.StringUtils.isEmpty;
@@ -130,6 +135,7 @@ public class NatsServer implements DisposableBean {
         }
 
         Path natsServerPath = getNatsServerPath(OPERATING_SYSTEM);
+        SystemUtil.setFilePermissions(natsServerPath, OWNER_EXECUTE, OTHERS_EXECUTE, OWNER_READ, OTHERS_READ, OWNER_WRITE, OTHERS_WRITE);
         LOG.info("Starting [{}] port [{}] version [{}-{}]", BEAN_NAME, getPort(), NATS_SERVER_VERSION, OPERATING_SYSTEM);
 
         String command = prepareCommand(natsServerPath);
