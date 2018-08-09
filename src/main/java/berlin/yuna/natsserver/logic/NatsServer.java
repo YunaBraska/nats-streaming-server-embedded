@@ -1,8 +1,10 @@
 package berlin.yuna.natsserver.logic;
 
 import berlin.yuna.natsserver.config.NatsServerConfig;
-import berlin.yuna.natsserver.util.StreamGobbler;
-import berlin.yuna.natsserver.util.SystemUtil.OperatingSystem;
+import berlin.yuna.system.logic.SystemUtil;
+import berlin.yuna.system.logic.SystemUtil.OperatingSystem;
+import berlin.yuna.system.logic.Terminal;
+import berlin.yuna.system.util.StreamGobbler;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.util.StringUtils;
@@ -21,10 +23,9 @@ import java.util.MissingFormatArgumentException;
 import java.util.concurrent.Executors;
 
 import static berlin.yuna.natsserver.config.NatsServerConfig.PORT;
-import static berlin.yuna.natsserver.util.SystemUtil.OperatingSystem.WINDOWS;
-import static berlin.yuna.natsserver.util.SystemUtil.copyResourceFile;
-import static berlin.yuna.natsserver.util.SystemUtil.executeCommand;
-import static berlin.yuna.natsserver.util.SystemUtil.getOsType;
+import static berlin.yuna.system.logic.SystemUtil.OperatingSystem.WINDOWS;
+import static berlin.yuna.system.logic.SystemUtil.getOsType;
+import static berlin.yuna.system.logic.SystemUtil.killProcessByName;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.util.StringUtils.isEmpty;
@@ -90,7 +91,7 @@ public class NatsServer implements DisposableBean {
      * @see NatsServer#setNatsServerConfig(String...)
      * @see NatsServerConfig
      */
-    public void setNatsServerConfig(Map<NatsServerConfig, String> natsServerConfig) {
+    public void setNatsServerConfig(final Map<NatsServerConfig, String> natsServerConfig) {
         this.natsServerConfig = natsServerConfig;
     }
 
@@ -100,7 +101,7 @@ public class NatsServer implements DisposableBean {
      * @param natsServerConfigArray example: port:4222, user:admin, password:admin
      * @see NatsServerConfig
      */
-    public void setNatsServerConfig(String... natsServerConfigArray) {
+    public void setNatsServerConfig(final String... natsServerConfigArray) {
         for (String property : natsServerConfigArray) {
             String[] pair = property.split(":");
             if (!StringUtils.hasText(property) || pair.length != 2) {
@@ -135,9 +136,7 @@ public class NatsServer implements DisposableBean {
 
         LOG.debug(command);
 
-        process = executeCommand(command);
-        Executors.newSingleThreadExecutor().submit(new StreamGobbler(process.getErrorStream(), LOG::info));
-        Executors.newSingleThreadExecutor().submit(new StreamGobbler(process.getInputStream(), LOG::error));
+        process = new Terminal().timeoutMs(10000).breakOnError(false).execute(command).process();
 
         if (!waitForPort(false)) {
             throw new PortUnreachableException(BEAN_NAME + "failed to start.");
@@ -156,6 +155,7 @@ public class NatsServer implements DisposableBean {
             LOG.info("Stopping [{}]", BEAN_NAME);
             process.destroy();
             process.waitFor();
+            killProcessByName(getNatsServerPath(OPERATING_SYSTEM).getFileName().toString());
         } catch (NullPointerException | InterruptedException e) {
             LOG.warn("Could not stop [{}] cause cant find process", BEAN_NAME);
         } finally {
@@ -192,13 +192,13 @@ public class NatsServer implements DisposableBean {
      *
      * @return Resource/{SIMPLE_CLASS_NAME}/{NATS_SERVER_VERSION}/{OPERATING_SYSTEM}/{SIMPLE_CLASS_NAME}
      */
-    Path getNatsServerPath(OperatingSystem operatingSystem) {
+    Path getNatsServerPath(final OperatingSystem operatingSystem) {
         StringBuilder relativeResource = new StringBuilder();
         relativeResource.append(BEAN_NAME.toLowerCase()).append(File.separator);
         relativeResource.append(NATS_SERVER_VERSION).append(File.separator);
         relativeResource.append(operatingSystem.toString().toLowerCase()).append(File.separator);
         relativeResource.append(BEAN_NAME.toLowerCase()).append((operatingSystem == WINDOWS ? ".exe" : ""));
-        return copyResourceFile(relativeResource.toString());
+        return SystemUtil.copyResourceToTemp(getClass(), relativeResource.toString());
     }
 
     private boolean waitForPort(boolean isFree) {
