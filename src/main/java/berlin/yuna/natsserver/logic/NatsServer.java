@@ -176,7 +176,7 @@ public class NatsServer implements DisposableBean {
             LOG.info("Stopping [{}]", BEAN_NAME);
             process.destroy();
             process.waitFor();
-            killProcessByName(getNatsServerPath(OPERATING_SYSTEM).getFileName().toString());
+//            killProcessByName(getNatsServerPath(OPERATING_SYSTEM).getFileName().toString());
         } catch (NullPointerException | InterruptedException e) {
             LOG.warn("Could not stop [{}] cause cant find process", BEAN_NAME);
         } finally {
