@@ -43,7 +43,7 @@ public class NatsServerWithoutAnnotationTest {
     @Test
     public void natsServer_withoutAnnotation_shouldNotBeStarted() throws Exception {
         expectedException.expect(ConnectException.class);
-        new Socket("localhost", 4222).close();
+        new Socket("localhost", 4245).close();
     }
 
     @Test
