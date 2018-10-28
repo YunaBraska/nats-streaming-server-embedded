@@ -149,7 +149,7 @@ public class NatsServer implements DisposableBean {
 
         Path natsServerPath = getNatsServerPath(OPERATING_SYSTEM);
         SystemUtil.setFilePermissions(natsServerPath, OWNER_EXECUTE, OTHERS_EXECUTE, OWNER_READ, OTHERS_READ, OWNER_WRITE, OTHERS_WRITE);
-        LOG.info("Starting [{}] port [{}] version [{}-{}]", BEAN_NAME, getPort(), OPERATING_SYSTEM);
+        LOG.info("Starting [{}] port [{}] version [{}]", BEAN_NAME, getPort(), OPERATING_SYSTEM);
 
         String command = prepareCommand(natsServerPath);
 
@@ -160,7 +160,7 @@ public class NatsServer implements DisposableBean {
         if (!waitForPort(false)) {
             throw new PortUnreachableException(BEAN_NAME + "failed to start.");
         }
-        LOG.info("Started [{}] port [{}] version [{}-{}]", BEAN_NAME, getPort(), OPERATING_SYSTEM);
+        LOG.info("Started [{}] port [{}] version [{}]", BEAN_NAME, getPort(), OPERATING_SYSTEM);
         return this;
     }
 
