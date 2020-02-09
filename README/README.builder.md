@@ -1,11 +1,9 @@
 [var target]: # (/)
 
 # !{project.name}
+Embedded [Nats streaming server](https://github.com/nats-io/nats-streaming-server) for testing which contains the original [Nats streaming server](https://github.com/nats-io/nats-streaming-server) 
 
 [include]: # (/README/shields.include.md)
-
-### Description
-Embedded [Nats streaming server](https://github.com/nats-io/nats-streaming-server) for testing which contains the original [Nats streaming server](https://github.com/nats-io/nats-streaming-server) 
 
 ### Usage
 * One annotation to setup the powerful [Nats streaming server](https://github.com/nats-io/nats-streaming-server)
