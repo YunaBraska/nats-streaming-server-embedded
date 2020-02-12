@@ -28,7 +28,6 @@ import java.util.zip.ZipFile;
 
 import static berlin.yuna.clu.logic.SystemUtil.OperatingSystem.WINDOWS;
 import static berlin.yuna.clu.logic.SystemUtil.getOsType;
-import static berlin.yuna.clu.logic.SystemUtil.killProcessByName;
 import static berlin.yuna.natsserver.config.NatsServerConfig.PORT;
 import static java.nio.channels.Channels.newChannel;
 import static java.nio.file.attribute.PosixFilePermission.OTHERS_EXECUTE;
@@ -201,7 +200,7 @@ public class NatsServer implements DisposableBean {
     public int port() {
         String port = natsServerConfig.get(PORT);
         if (port != null) {
-            return Integer.valueOf(port);
+            return Integer.parseInt(port);
         }
         throw new MissingFormatArgumentException("Could not initialise port" + BEAN_NAME);
     }
