@@ -1,7 +1,6 @@
 package berlin.yuna.natsserver.logic;
 
 import berlin.yuna.natsserver.annotation.EnableNatsServer;
-import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +13,6 @@ import java.net.Socket;
 import java.nio.file.Files;
 
 import static berlin.yuna.clu.logic.SystemUtil.getOsType;
-import static berlin.yuna.clu.logic.SystemUtil.killProcessByName;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -30,11 +28,6 @@ public class NatsServerComponentTest {
 
     @Value("${nats.source.default}")
     private String natsSource;
-
-    @After
-    public void tearDown() {
-        killProcessByName("natsserver");
-    }
 
     @Test
     public void natsServer_shouldDownloadUnzipAndStart() throws IOException {
