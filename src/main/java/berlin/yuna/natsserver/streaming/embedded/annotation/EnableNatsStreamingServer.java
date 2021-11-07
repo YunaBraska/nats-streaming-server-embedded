@@ -38,7 +38,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 public @interface EnableNatsStreamingServer {
 
     /**
-     * Passes port number to {@link NatsStreamingServer#setConfig(String...)}
+     * Passes port number to {@link NatsStreamingServer#config(String...)}
      */
     int port() default 4222;
 
@@ -53,7 +53,7 @@ public @interface EnableNatsStreamingServer {
     boolean randomPort() default false;
 
     /**
-     * Passes the original parameters to {@link NatsStreamingServer#setConfig(String...)} for startup
+     * Passes the original parameters to {@link NatsStreamingServer#config(String...)} for startup
      * {@link berlin.yuna.natsserver.config.NatsStreamingConfig}
      */
     String[] config() default {};

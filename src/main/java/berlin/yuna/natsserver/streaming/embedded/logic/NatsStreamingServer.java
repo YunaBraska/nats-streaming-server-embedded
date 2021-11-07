@@ -1,6 +1,8 @@
 package berlin.yuna.natsserver.streaming.embedded.logic;
 
-import berlin.yuna.clu.logic.SystemUtil;
+import berlin.yuna.clu.model.OsArch;
+import berlin.yuna.clu.model.OsArchType;
+import berlin.yuna.clu.model.OsType;
 import berlin.yuna.natsserver.config.NatsStreamingSourceConfig;
 import berlin.yuna.natsserver.logic.NatsStreaming;
 import org.springframework.beans.factory.DisposableBean;
@@ -60,8 +62,12 @@ public class NatsStreamingServer extends NatsStreaming implements DisposableBean
         return this;
     }
 
-    protected Path getNatsServerPath(SystemUtil.OperatingSystem operatingSystem) {
-        return super.getNatsServerPath(operatingSystem);
+    protected Path getDefaultPath() {
+        return super.getDefaultPath();
+    }
+
+    protected Path getNatsServerPath(final OsType os, final OsArch arch, final OsArchType archType) {
+        return super.getNatsServerPath(os, arch, archType);
     }
 
     /**

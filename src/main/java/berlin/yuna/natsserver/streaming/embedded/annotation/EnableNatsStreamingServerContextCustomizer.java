@@ -1,6 +1,5 @@
 package berlin.yuna.natsserver.streaming.embedded.annotation;
 
-import berlin.yuna.clu.logic.SystemUtil;
 import berlin.yuna.natsserver.config.NatsStreamingConfig;
 import berlin.yuna.natsserver.streaming.embedded.logic.NatsStreamingServer;
 import berlin.yuna.natsserver.streaming.embedded.model.exception.NatsStreamingStartException;
@@ -71,7 +70,7 @@ class EnableNatsStreamingServerContextCustomizer implements ContextCustomizer {
     }
 
     private String overwriteSourceUrl(final ConfigurableEnvironment environment, final String fallback) {
-        return environment.getProperty("nats.streaming.source.default", environment.getProperty("nats.streaming.source." + SystemUtil.getOsType().toString().toLowerCase(), fallback));
+        return environment.getProperty("nats.streaming.source.default", environment.getProperty("nats.streaming.source.url", fallback));
     }
 
     private int overwritePort(final NatsStreamingServer natsServerBean) {

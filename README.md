@@ -55,7 +55,7 @@ A spring wrapper of [Java-Nats-Streaming-Server](https://github.com/YunaBraska/n
 <dependency>
   <groupId>berlin.yuna</groupId>
   <artifactId>nats-streaming-server-embedded</artifactId>
-  <version>0.20.11</version>
+  <version>0.23.1</version>
 </dependency>
 ```
 
@@ -98,11 +98,7 @@ class for optional available nats version configuration
 ```yaml
 nats:
   source:
-    mac: "https://nats-mac.zip"
-    linux: "https://nats-linux.zip"
-    solaris: "https://nats-solaris.zip"
-    windows: "https://nats-windows.zip"
-    default: "file://${user.dir}/nats-foo-bar.zip"
+    url: "https://nats-mac.zip"
 ```
 
 ```
