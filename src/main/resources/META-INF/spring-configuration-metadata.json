@@ -446,6 +446,6 @@
     "type" : "java.lang.String",
     "description" : "DEFAULT SOURCE URL",
     "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingSourceConfig",
-    "defaultValue" : "https://github.com/nats-io/nats-streaming-server/releases/download/v0.23.0/nats-streaming-server-v0.23.0-darwin-arm64.zip"
+    "defaultValue" : "https://github.com/nats-io/nats-streaming-server/releases/download/v0.23.0/nats-streaming-server-v0.23.0-linux-amd64.zip"
   } ]
 }
