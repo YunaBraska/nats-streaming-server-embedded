@@ -15,8 +15,8 @@ class EnableNatsStreamingServerContextCustomizerFactory implements ContextCustom
      * @return {@link EnableNatsStreamingServerContextCustomizer}
      */
     @Override
-    public ContextCustomizer createContextCustomizer(Class<?> testClass, List<ContextConfigurationAttributes> configAttributes) {
-        EnableNatsStreamingServer enableNatsServer = AnnotatedElementUtils.findMergedAnnotation(testClass, EnableNatsStreamingServer.class);
+    public ContextCustomizer createContextCustomizer(final Class<?> testClass, final List<ContextConfigurationAttributes> configAttributes) {
+        final EnableNatsStreamingServer enableNatsServer = AnnotatedElementUtils.findMergedAnnotation(testClass, EnableNatsStreamingServer.class);
         return new EnableNatsStreamingServerContextCustomizer(enableNatsServer);
     }
 
