@@ -21,11 +21,11 @@ A spring wrapper of [Java-Nats-Streaming-Server](https://github.com/YunaBraska/n
 [coverage_shield]: https://img.shields.io/codeclimate/coverage/YunaBraska/nats-streaming-server-embedded?style=flat-square
 [coverage_link]: https://codeclimate.com/github/YunaBraska/nats-streaming-server-embedded/test_coverage
 [issues_shield]: https://img.shields.io/github/issues/YunaBraska/nats-streaming-server-embedded?style=flat-square
-[issues_link]: https://github.com/YunaBraska/nats-streaming-server-embedded/commits/master
+[issues_link]: https://github.com/YunaBraska/nats-streaming-server-embedded/commits/main
 [commit_shield]: https://img.shields.io/github/last-commit/YunaBraska/nats-streaming-server-embedded?style=flat-square
 [commit_link]: https://github.com/YunaBraska/nats-streaming-server-embedded/issues
 [license_shield]: https://img.shields.io/github/license/YunaBraska/nats-streaming-server-embedded?style=flat-square
-[license_link]: https://github.com/YunaBraska/nats-streaming-server-embedded/blob/master/LICENSE
+[license_link]: https://github.com/YunaBraska/nats-streaming-server-embedded/blob/main/LICENSE
 [dependency_shield]: https://img.shields.io/librariesio/github/YunaBraska/nats-streaming-server-embedded?style=flat-square
 [dependency_link]: https://libraries.io/github/YunaBraska/nats-streaming-server-embedded
 [central_shield]: https://img.shields.io/maven-central/v/berlin.yuna/nats-streaming-server-embedded?style=flat-square
@@ -41,10 +41,10 @@ A spring wrapper of [Java-Nats-Streaming-Server](https://github.com/YunaBraska/n
 
 ### Family
 
-* Nats plain Java
+* Nats **plain Java**
   * [Nats-Server](https://github.com/YunaBraska/nats-server)
   * [Nats-Streaming-Server](https://github.com/YunaBraska/nats-streaming-server)
-* Nats for spring boot
+* Nats for **Spring Boot**
   * [Nats-Server-Embedded](https://github.com/YunaBraska/nats-server-embedded)
   * [Nats-Streaming-Server-Embedded](https://github.com/YunaBraska/nats-streaming-server-embedded)
 
@@ -55,7 +55,7 @@ A spring wrapper of [Java-Nats-Streaming-Server](https://github.com/YunaBraska/n
 <dependency>
   <groupId>berlin.yuna</groupId>
   <artifactId>nats-streaming-server-embedded</artifactId>
-  <version>0.23.1</version>
+  <version>0.23.4</version>
 </dependency>
 ```
 
@@ -67,38 +67,33 @@ A spring wrapper of [Java-Nats-Streaming-Server](https://github.com/YunaBraska/n
 
 ```java
 
+import berlin.yuna.natsserver.streaming.embedded.annotation.EnableNatsStreamingServer;
+
 @SpringBootTest
 @RunWith(SpringRunner.class)
-@EnableNatsServer(port = 4222, natsServerConfig = {"user:admin", "pass:admin"})
+@EnableNatsStreamingServer(port = 4222, config = {"user", "admin", "pass", "admin"})
 public class SomeTest {
     [...]
 }
 ```
 
 *
-See [NatsStreamingConfig](https://github.com/YunaBraska/nats-streaming-server/blob/master/src/main/java/berlin/yuna/natsserver/config/NatsStreamingConfig.java)
+
+See [NatsStreamingConfig](https://github.com/YunaBraska/nats-streaming-server/blob/main/src/main/java/berlin/yuna/natsserver/config/NatsStreamingConfig.java)
 class for available properties
+
 * @EnableNatsServer is also reading spring config
 * @EnableNatsServer parameters are overwriting the spring properties
 
 ```yaml
 nats:
-  server:
-    hb_fail_count: 3
+  streaming:
+    server:
+      hb_fail_count: 3
 ```
 
 ```properties
-nats.server.hb_fail_count=3
-```
-
-*
-See [NatsStreamingSourceConfig](https://github.com/YunaBraska/nats-streaming-server/blob/master/src/main/java/berlin/yuna/natsserver/config/NatsStreamingSourceConfig.java)
-class for optional available nats version configuration
-
-```yaml
-nats:
-  source:
-    url: "https://nats-mac.zip"
+nats.streaming.server.hb_fail_count=3
 ```
 
 ```

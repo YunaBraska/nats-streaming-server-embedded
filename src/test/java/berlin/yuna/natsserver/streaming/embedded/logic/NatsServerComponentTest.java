@@ -11,13 +11,11 @@ import java.io.IOException;
 import java.net.Socket;
 import java.nio.file.Files;
 
-import static berlin.yuna.clu.logic.SystemUtil.OS;
-import static berlin.yuna.clu.logic.SystemUtil.OS_ARCH;
-import static berlin.yuna.clu.logic.SystemUtil.OS_ARCH_TYPE;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
@@ -32,21 +30,22 @@ class NatsServerComponentTest {
     @Test
     @DisplayName("Download and start server")
     void natsServer_shouldDownloadUnzipAndStart() throws IOException {
-        Files.deleteIfExists(natsServer.getNatsServerPath(OS, OS_ARCH, OS_ARCH_TYPE));
+        Files.deleteIfExists(natsServer.binaryFile());
         assertThat(natsServer, is(notNullValue()));
         assertThat(natsServer.port(), is(4222));
+        assertThat(natsServer.pid(), is(greaterThan(-1)));
     }
 
     @Test
     @DisplayName("Port config with double dash")
     void secondNatsServer_withDoubleDotSeparatedProperty_shouldStartSuccessful() {
-        assertNatsServerStart(4225, "--port:4225");
+        assertNatsServerStart(4225, "--port", "4225");
     }
 
     @Test
     @DisplayName("Port config without dashes")
     void secondNatsServer_withOutMinusProperty_shouldStartSuccessful() {
-        assertNatsServerStart(4226, "port:4226");
+        assertNatsServerStart(4226, "port", "4226");
     }
 
     @Test
@@ -54,7 +53,7 @@ class NatsServerComponentTest {
     void secondNatsServer_withInvalidProperty_shouldFailToStart() {
         assertThrows(
                 IllegalArgumentException.class,
-                () -> assertNatsServerStart(4228, "p:4228"),
+                () -> assertNatsServerStart(4228, "p", "4228"),
                 "No enum constant"
         );
     }
@@ -62,17 +61,17 @@ class NatsServerComponentTest {
     @Test
     @DisplayName("ToString")
     void toString_shouldPrintPortAndOs() {
-        String runningNatsServer = natsServer.toString();
-        assertThat(runningNatsServer, containsString(OS.toString()));
-        assertThat(runningNatsServer, containsString("4222"));
+        final String serverString = natsServer.toString();
+        assertThat(serverString, containsString("4222"));
     }
 
-    private void assertNatsServerStart(final int port, final String... natsServerConfig) {
-        final NatsStreamingServer natsServer = new NatsStreamingServer(10000, natsServerConfig);
+    private void assertNatsServerStart(final int port, final String... config) {
+        final NatsStreamingServer natsServer = new NatsStreamingServer(10000);
+        natsServer.config(config);
         try {
             natsServer.start();
             new Socket("localhost", port).close();
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
             natsServer.stop();
