@@ -6,7 +6,7 @@
 
     <groupId>berlin.yuna</groupId>
     <artifactId>nats-streaming-server-embedded</artifactId>
-    <version>0.23.5</version>
+    <version>0.23.6</version>
     <packaging>jar</packaging>
 
     <name>${project.artifactId}</name>
@@ -145,9 +145,9 @@
                         **  Match zero or more directories
                         ?   Match a single character
                         -->
-                        <exclude>**/*/config/**/*</exclude>
-                        <exclude>**/*/model/**/*</exclude>
-                        <exclude>**/*/domain/**/*</exclude>
+<!--                        <exclude>**/*/config/**/*</exclude>-->
+<!--                        <exclude>**/*/model/**/*</exclude>-->
+<!--                        <exclude>**/*/domain/**/*</exclude>-->
                         <exclude>**/*/persistence/**/*</exclude>
                         <exclude>**/*/target/**/*</exclude>
                     </excludes>

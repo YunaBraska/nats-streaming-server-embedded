@@ -55,7 +55,7 @@ A spring wrapper of [Java-Nats-Streaming-Server](https://github.com/YunaBraska/n
 <dependency>
   <groupId>berlin.yuna</groupId>
   <artifactId>nats-streaming-server-embedded</artifactId>
-  <version>0.23.4</version>
+  <version>0.23.6</version>
 </dependency>
 ```
 
