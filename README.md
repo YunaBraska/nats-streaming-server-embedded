@@ -1,5 +1,5 @@
 # nats-streaming-server-embedded
-A spring wrapper of [Java-Nats-Streaming-Server](https://github.com/YunaBraska/nats-streaming-server) which contains the original [Nats streaming server](https://github.com/nats-io/nats-streaming-server)
+Nats Server for testing which contains the original [Nats server](https://github.com/nats-io/nats-server)
 
 [![Build][build_shield]][build_link]
 [![Maintainable][maintainable_shield]][maintainable_link]
@@ -44,6 +44,8 @@ A spring wrapper of [Java-Nats-Streaming-Server](https://github.com/YunaBraska/n
 * Nats **plain Java**
   * [Nats-Server](https://github.com/YunaBraska/nats-server)
   * [Nats-Streaming-Server](https://github.com/YunaBraska/nats-streaming-server)
+* Nats for **JUnit**
+  * [Nats-Server-JUnit](https://github.com/YunaBraska/nats-server-junit)
 * Nats for **Spring Boot**
   * [Nats-Server-Embedded](https://github.com/YunaBraska/nats-server-embedded)
   * [Nats-Streaming-Server-Embedded](https://github.com/YunaBraska/nats-streaming-server-embedded)
@@ -55,7 +57,7 @@ A spring wrapper of [Java-Nats-Streaming-Server](https://github.com/YunaBraska/n
 <dependency>
   <groupId>berlin.yuna</groupId>
   <artifactId>nats-streaming-server-embedded</artifactId>
-  <version>0.23.6</version>
+  <version>0.23.12</version>
 </dependency>
 ```
 
@@ -63,7 +65,7 @@ A spring wrapper of [Java-Nats-Streaming-Server](https://github.com/YunaBraska/n
 
 ### Example
 
-* One annotation to set up the powerful [Nats streaming server](https://github.com/nats-io/nats-streaming-server)
+* One annotation to set up the [Nats streaming server](https://github.com/nats-io/nats-streaming-server)
 
 ```java
 
@@ -77,10 +79,7 @@ public class SomeTest {
 }
 ```
 
-*
-
-See [NatsStreamingConfig](https://github.com/YunaBraska/nats-streaming-server/blob/main/src/main/java/berlin/yuna/natsserver/config/NatsStreamingConfig.java)
-class for available properties
+* See [NatsStreamingConfig](https://github.com/YunaBraska/nats-streaming-server/blob/main/src/main/java/berlin/yuna/natsserver/config/NatsStreamingConfig.java) class for available properties
 
 * @EnableNatsServer is also reading spring config
 * @EnableNatsServer parameters are overwriting the spring properties
