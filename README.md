@@ -41,58 +41,7 @@ Nats Server for testing which contains the original [Nats server](https://github
 [gitter_shield]: https://img.shields.io/gitter/room/YunaBraska/nats-streaming-server-embedded?style=flat-square
 [gitter_link]: https://gitter.im/nats-streaming-server-embedded/Lobby
 
-### Family
+**[Deprecation Notice](https://github.com/nats-io/nats-streaming-server#warning--deprecation-notice-warning)**
 
-* Nats **plain Java**
-  * [Nats-Server](https://github.com/YunaBraska/nats-server)
-  * [Nats-Streaming-Server](https://github.com/YunaBraska/nats-streaming-server)
-* Nats for **JUnit**
-  * [Nats-Server-JUnit](https://github.com/YunaBraska/nats-server-junit)
-* Nats for **Spring Boot**
-  * [Nats-Server-Embedded](https://github.com/YunaBraska/nats-server-embedded)
-  * [Nats-Streaming-Server-Embedded](https://github.com/YunaBraska/nats-streaming-server-embedded)
-
-### Usage
-
-```xml
-
-<dependency>
-  <groupId>berlin.yuna</groupId>
-  <artifactId>nats-streaming-server-embedded</artifactId>
-  <version>0.23.12</version>
-</dependency>
-```
-
-[Get latest version][central_link]
-
-### Example
-
-* One annotation to set up the [Nats streaming server](https://github.com/nats-io/nats-streaming-server)
-
-```java
-
-import berlin.yuna.natsserver.streaming.embedded.annotation.EnableNatsStreamingServer;
-
-@SpringBootTest
-@RunWith(SpringRunner.class)
-@EnableNatsStreamingServer(port = 4222, config = {"user", "admin", "pass", "admin"})
-public class SomeTest {
-    [...]
-}
-```
-
-* See [NatsStreamingConfig](https://github.com/YunaBraska/nats-streaming-server/blob/main/src/main/java/berlin/yuna/natsserver/config/NatsStreamingConfig.java) class for available properties
-
-* @EnableNatsServer is also reading spring config
-* @EnableNatsServer parameters are overwriting the spring properties
-
-```yaml
-nats:
-  streaming:
-    server:
-      hb_fail_count: 3
-```
-
-```properties
-nats.streaming.server.hb_fail_count=3
-```
+For more, have a look to the [Documentation (GitHubPage)](https://yunabraska.github.io/nats-server/) *(You will find
+Examples, Configs, Spring, Junit, etc.)*
