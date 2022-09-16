@@ -17,9 +17,9 @@ class VersionTextUpdaterTest {
     @Test
     void updateVersionTxtTest() throws IOException {
         final Path versionFile = Paths.get(System.getProperty("user.dir"), "version.txt");
-        final String versionText = readFile(versionFile);
+        final String versionText = readFile(versionFile).trim();
         final String natsVersion = NATS_STREAMING_VERSION.value();
-        if (!requireNonNull(natsVersion).equals(versionText)) {
+        if (!requireNonNull(natsVersion).equals((versionText.contains("-"))? versionText.substring(0, versionText.indexOf("-")) : versionText)) {
             Files.write(versionFile, (natsVersion.startsWith("v") ? natsVersion.substring(1) : natsVersion).getBytes());
         }
     }
