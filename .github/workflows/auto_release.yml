@@ -1,10 +1,10 @@
-name: "Tag: on Schedule"
+name: "MVN_RELEASE"
 
 on:
   workflow_dispatch:
     branches: [ main, master ]
   schedule:
-    - cron: "0 9 * * *"
+    - cron: "0 11 * * *"
 
 jobs:
   maven_update:

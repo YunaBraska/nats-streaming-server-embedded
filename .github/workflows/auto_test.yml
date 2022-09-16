@@ -1,4 +1,4 @@
-name: "Test: On Push"
+name: "MVN_Test"
 
 on:
   workflow_dispatch:
