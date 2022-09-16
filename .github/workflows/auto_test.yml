@@ -1,4 +1,4 @@
-name: "MVN_Test"
+name: "MVN_TEST"
 
 on:
   workflow_dispatch:

@@ -4,7 +4,7 @@
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/donate/?hosted_button_id=HFHFUT3G6TZF6)
 
-Nats Server for testing which contains the original [Nats server](https://github.com/nats-io/nats-server)
+Nats Server for testing which contains the original [Nats streaming server](https://github.com/nats-io/nats-streaming-server)
 
 [![Build][build_shield]][build_link]
 [![Maintainable][maintainable_shield]][maintainable_link]
@@ -19,8 +19,8 @@ Nats Server for testing which contains the original [Nats server](https://github
 [![Size][size_shield]][size_shield]
 ![Label][label_shield]
 
-[build_shield]: https://github.com/YunaBraska/nats-streaming-server-embedded/workflows/JAVA_CI/badge.svg
-[build_link]: https://github.com/YunaBraska/nats-streaming-server-embedded/actions?query=workflow%3AJAVA_CI
+[build_shield]: https://github.com/YunaBraska/nats-streaming-server-embedded/workflows/MVN_RELEASE/badge.svg
+[build_link]: https://github.com/YunaBraska/nats-streaming-server-embedded/actions?query=workflow%3AMVN_RELEASE
 [maintainable_shield]: https://img.shields.io/codeclimate/maintainability/YunaBraska/nats-streaming-server-embedded?style=flat-square
 [maintainable_link]: https://codeclimate.com/github/YunaBraska/nats-streaming-server-embedded/maintainability
 [coverage_shield]: https://img.shields.io/codeclimate/coverage/YunaBraska/nats-streaming-server-embedded?style=flat-square
