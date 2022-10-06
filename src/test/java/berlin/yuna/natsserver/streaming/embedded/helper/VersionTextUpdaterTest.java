@@ -1,5 +1,6 @@
-package berlin.yuna.natsserver.streaming.embedded;
+package berlin.yuna.natsserver.streaming.embedded.helper;
 
+import com.vdurmont.semver4j.Semver;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -17,11 +18,15 @@ class VersionTextUpdaterTest {
     @Test
     void updateVersionTxtTest() throws IOException {
         final Path versionFile = Paths.get(System.getProperty("user.dir"), "version.txt");
-        final String versionText = readFile(versionFile).trim();
-        final String natsVersion = NATS_STREAMING_VERSION.value();
-        if (!requireNonNull(natsVersion).equals((versionText.contains("-"))? versionText.substring(0, versionText.indexOf("-")) : versionText)) {
-            Files.write(versionFile, (natsVersion.startsWith("v") ? natsVersion.substring(1) : natsVersion).getBytes());
+        final Semver versionText = semverOf(readFile(versionFile).trim());
+        final Semver natsVersion = semverOf(NATS_STREAMING_VERSION.value());
+        if (natsVersion.compareTo(versionText) > 0) {
+            Files.write(versionFile, natsVersion.getOriginalValue().getBytes());
         }
+    }
+
+    private static Semver semverOf(final String semver){
+        return new Semver(semver.startsWith("v") ? semver.substring(1) : semver);
     }
 
     private static String readFile(final Path versionFile) {
