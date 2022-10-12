@@ -453,7 +453,7 @@
     "type" : "java.lang.String",
     "description" : "Overwrites Nats server version on path",
     "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig",
-    "defaultValue" : "v0.24.6"
+    "defaultValue" : "v0.25.2"
   }, {
     "name" : "nats.streaming.server.nats_download_url",
     "type" : "java.lang.String",
