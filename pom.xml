@@ -6,7 +6,7 @@
 
     <groupId>berlin.yuna</groupId>
     <artifactId>nats-streaming-server-embedded</artifactId>
-    <version>0.25.3-rc.2</version>
+    <version>0.25.3-rc.3</version>
     <packaging>jar</packaging>
 
     <name>${project.artifactId}</name>
