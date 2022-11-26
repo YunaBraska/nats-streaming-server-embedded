@@ -36,7 +36,7 @@
 
     <properties>
         <!-- PROPERTIES -->
-        <java-version>8</java-version>
+        <java-version>17</java-version>
         <project.encoding>UTF-8</project.encoding>
         <project.build.sourceEncoding>${project.encoding}</project.build.sourceEncoding>
         <project.reporting.outputEncoding>${project.encoding}</project.reporting.outputEncoding>
@@ -64,6 +64,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <version>${spring-boot.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
 <!--            <scope>provided</scope>-->
         </dependency>
         <dependency>
@@ -71,6 +77,13 @@
             <artifactId>nats-streaming-server</artifactId>
             <version>${nats-streaming-server.version}</version>
         </dependency>
+        <!-- Spring Boot 3-->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>2.0.5</version>
+        </dependency>
+
 
         <!-- TEST -->
         <dependency>
