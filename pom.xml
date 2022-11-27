@@ -6,7 +6,7 @@
 
     <groupId>berlin.yuna</groupId>
     <artifactId>nats-streaming-server-embedded</artifactId>
-    <version>0.25.3-rc.9</version>
+    <version>0.25.3-rc.10</version>
     <packaging>jar</packaging>
 
     <name>${project.artifactId}</name>
@@ -45,7 +45,7 @@
         <semver4j.version>3.1.0</semver4j.version>
         <spring-boot.version>3.0.0</spring-boot.version>
         <nats-streaming-server.version>0.25.3-rc.1</nats-streaming-server.version>
-        <config-metadata-generator.version>0.6.75</config-metadata-generator.version>
+        <config-metadata-generator.version>0.6.76</config-metadata-generator.version>
         <!-- VERSIONS BUILD -->
         <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
         <maven-scm-plugin.version>1.11.2</maven-scm-plugin.version>
