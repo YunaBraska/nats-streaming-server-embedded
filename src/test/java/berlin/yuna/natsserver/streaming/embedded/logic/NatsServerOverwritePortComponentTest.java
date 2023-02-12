@@ -8,8 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.io.IOException;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -31,6 +29,6 @@ class NatsServerOverwritePortComponentTest {
         assertThat(natsServer, is(notNullValue()));
         assertThat(natsServer.port(), is(4246));
         assertThat(natsServer.pid(), is(greaterThan(-1)));
-        natsServer.stop();
+        natsServer.close();
     }
 }

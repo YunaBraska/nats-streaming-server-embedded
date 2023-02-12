@@ -19,7 +19,7 @@ class VersionTextUpdaterTest {
     void updateVersionTxtTest() throws IOException {
         final Path versionFile = Paths.get(System.getProperty("user.dir"), "version.txt");
         final Semver versionText = semverOf(readFile(versionFile).trim());
-        final Semver natsVersion = semverOf(NATS_STREAMING_VERSION.value());
+        final Semver natsVersion = semverOf(NATS_STREAMING_VERSION.defaultValueStr());
         if (natsVersion.compareTo(versionText) > 0) {
             Files.write(versionFile, natsVersion.getOriginalValue().getBytes());
         }

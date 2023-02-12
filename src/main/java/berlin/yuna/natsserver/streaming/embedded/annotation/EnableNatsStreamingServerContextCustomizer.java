@@ -1,6 +1,7 @@
 package berlin.yuna.natsserver.streaming.embedded.annotation;
 
 import berlin.yuna.natsserver.config.NatsStreamingConfig;
+import berlin.yuna.natsserver.config.NatsStreamingOptionsBuilder;
 import berlin.yuna.natsserver.streaming.embedded.logic.NatsStreamingServer;
 import berlin.yuna.natsserver.streaming.embedded.model.exception.NatsStreamingStartException;
 import org.slf4j.Logger;
@@ -13,10 +14,13 @@ import org.springframework.test.context.MergedContextConfiguration;
 import org.springframework.util.Assert;
 
 import static berlin.yuna.natsserver.config.NatsStreamingConfig.NATS_BINARY_PATH;
-import static berlin.yuna.natsserver.config.NatsStreamingConfig.NATS_CONFIG_FILE;
 import static berlin.yuna.natsserver.config.NatsStreamingConfig.NATS_DOWNLOAD_URL;
+import static berlin.yuna.natsserver.config.NatsStreamingConfig.NATS_PROPERTY_FILE;
 import static berlin.yuna.natsserver.config.NatsStreamingConfig.PORT;
+import static berlin.yuna.natsserver.config.NatsStreamingOptions.natsStreamingBuilder;
+import static berlin.yuna.natsserver.logic.NatsUtils.isNotEmpty;
 import static berlin.yuna.natsserver.streaming.embedded.logic.NatsStreamingServer.BEAN_NAME;
+import static java.util.Optional.ofNullable;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.util.StringUtils.hasText;
 
@@ -51,21 +55,32 @@ class EnableNatsStreamingServerContextCustomizer implements ContextCustomizer {
             return;
         }
 
-        final NatsStreamingServer natsServer = new NatsStreamingServer(enableNatsServer.timeoutMs());
-        setEnvConfig(natsServer, environment);
-        if (enableNatsServer.port() != natsServer.port()) {
-            natsServer.config(PORT, String.valueOf(enableNatsServer.port()));
+        NatsStreamingServer natsServer = null;
+        final NatsStreamingOptionsBuilder options = natsStreamingBuilder().timeoutMs(enableNatsServer.timeoutMs());
+        setEnvConfig(options, environment);
+        if (enableNatsServer.port() != (Integer) PORT.defaultValue()) {
+            options.port(enableNatsServer.port());
         }
-        natsServer.config(enableNatsServer.config());
-        configure(natsServer, NATS_CONFIG_FILE, enableNatsServer.configFile());
-        configure(natsServer, NATS_BINARY_PATH, enableNatsServer.binaryFile());
-        configure(natsServer, NATS_DOWNLOAD_URL, enableNatsServer.downloadUrl());
+        options.config(enableNatsServer.config()).version(isNotEmpty(enableNatsServer.version()) ? enableNatsServer.version() : options.version());
+        configure(options, NATS_PROPERTY_FILE, enableNatsServer.configFile());
+        configure(options, NATS_BINARY_PATH, enableNatsServer.binaryFile());
+        configure(options, NATS_DOWNLOAD_URL, enableNatsServer.downloadUrl());
 
         try {
-            natsServer.start(enableNatsServer.timeoutMs());
+            natsServer = new NatsStreamingServer(options.build());
         } catch (Exception e) {
-            natsServer.stop(enableNatsServer.timeoutMs());
-            throw new NatsStreamingStartException("Failed to initialise " + NatsStreamingServer.class.getSimpleName(), e);
+            ofNullable(natsServer).ifPresent(NatsStreamingServer::close);
+            throw new NatsStreamingStartException(
+                    "Failed to initialise"
+                            + " name [" + EnableNatsStreamingServer.class.getSimpleName() + "]"
+                            + " port [" + options.port() + "]"
+                            + " timeoutMs [" + options.timeoutMs() + "]"
+                            + " logLevel [" + options.logLevel() + "]"
+                            + " autostart [" + options.autostart() + "]"
+                            + " configFile [" + options.configFile() + "]"
+                            + " downloadUrl [" + options.configMap().get(NATS_DOWNLOAD_URL) + "]"
+                    , e
+            );
         }
 
         beanFactory.initializeBean(natsServer, BEAN_NAME);
@@ -74,18 +89,18 @@ class EnableNatsStreamingServerContextCustomizer implements ContextCustomizer {
 
     }
 
-    private void configure(final NatsStreamingServer natsServerBean, final NatsStreamingConfig key, final String value) {
+    private void configure(final NatsStreamingOptionsBuilder options, final NatsStreamingConfig key, final String value) {
         if (hasText(value)) {
-            natsServerBean.config(key, value);
+            options.config(key, value);
         }
     }
 
-    private void setEnvConfig(final NatsStreamingServer natsServer, final ConfigurableEnvironment environment) {
+    private void setEnvConfig(final NatsStreamingOptionsBuilder options, final ConfigurableEnvironment environment) {
         for (NatsStreamingConfig natsConfig : NatsStreamingConfig.values()) {
             final String key = "nats.streaming.server." + natsConfig.name().toLowerCase();
             final String value = environment.getProperty(key);
             if (hasText(value)) {
-                natsServer.config(natsConfig, value);
+                options.config(natsConfig, value);
             }
         }
     }

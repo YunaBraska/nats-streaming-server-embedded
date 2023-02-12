@@ -68,4 +68,9 @@ public @interface EnableNatsStreamingServer {
      * {@link berlin.yuna.natsserver.config.NatsStreamingConfig}
      */
     String[] config() default {};
+
+    /**
+     * Sets the version for the {@link NatsStreamingServer}
+     */
+    String version() default "";
 }

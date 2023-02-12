@@ -1,5 +1,6 @@
 package berlin.yuna.natsserver.streaming.embedded.logic;
 
+import berlin.yuna.natsserver.config.NatsStreamingOptions;
 import berlin.yuna.natsserver.logic.NatsStreaming;
 import org.springframework.beans.factory.DisposableBean;
 
@@ -9,24 +10,23 @@ import org.springframework.beans.factory.DisposableBean;
 public class NatsStreamingServer extends NatsStreaming implements DisposableBean {
 
     public static final String BEAN_NAME = NatsStreamingServer.class.getSimpleName();
-    private final long timeoutMs;
 
     /**
-     * Create {@link NatsStreaming} with simplest start able configuration
+     * Create {@link NatsStreaming} with the simplest start able configuration
      *
-     * @param timeoutMs tear down timeout
+     * @param options nats options / config
      */
-    public NatsStreamingServer(final long timeoutMs) {
-        this.timeoutMs = timeoutMs;
+    public NatsStreamingServer(final NatsStreamingOptions options) {
+        super(options);
     }
 
     /**
      * Simply stops the {@link NatsStreaming}
      *
-     * @see NatsStreaming#stop()
+     * @see NatsStreaming#close()
      */
     @Override
     public void destroy() {
-        stop(timeoutMs);
+        close();
     }
 }

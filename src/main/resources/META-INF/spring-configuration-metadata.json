@@ -9,14 +9,12 @@
     "name" : "nats.streaming.server.cluster_id",
     "type" : "java.lang.String",
     "description" : "Cluster ID (default: test-cluster)",
-    "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig",
-    "defaultValue" : "test-cluster"
+    "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig"
   }, {
     "name" : "nats.streaming.server.store",
     "type" : "java.lang.String",
-    "description" : "Store type: MEMORY|FILE (default: MEMORY)",
-    "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig",
-    "defaultValue" : "MEMORY"
+    "description" : "Store type: MEMORY|FILE|SQL (default: MEMORY)",
+    "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig"
   }, {
     "name" : "nats.streaming.server.dir",
     "type" : "java.lang.String",
@@ -26,32 +24,27 @@
     "name" : "nats.streaming.server.max_channels",
     "type" : "java.lang.Integer",
     "description" : "Max number of channels (0 for unlimited)",
-    "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig",
-    "defaultValue" : "0"
+    "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig"
   }, {
     "name" : "nats.streaming.server.max_subs",
     "type" : "java.lang.Integer",
     "description" : "Max number of subscriptions per channel (0 for unlimited)",
-    "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig",
-    "defaultValue" : 0
+    "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig"
   }, {
     "name" : "nats.streaming.server.max_msgs",
     "type" : "java.lang.Integer",
     "description" : "Max number of messages per channel (0 for unlimited)",
-    "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig",
-    "defaultValue" : 0
+    "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig"
   }, {
     "name" : "nats.streaming.server.max_bytes",
-    "type" : "java.lang.Long",
+    "type" : "java.lang.Integer",
     "description" : "Max messages total size per channel (0 for unlimited)",
-    "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig",
-    "defaultValue" : 0
+    "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig"
   }, {
     "name" : "nats.streaming.server.max_age",
     "type" : "java.lang.String",
     "description" : "Max duration a message can be stored (\"0s\" for unlimited)",
-    "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig",
-    "defaultValue" : "0s"
+    "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig"
   }, {
     "name" : "nats.streaming.server.max_inactivity",
     "type" : "java.lang.String",
@@ -61,7 +54,7 @@
   }, {
     "name" : "nats.streaming.server.nats_server",
     "type" : "java.lang.String",
-    "description" : "Connect to this external NATS Server URL (default otherwise)",
+    "description" : "Connect to this external NATS Server URL (embedded otherwise)",
     "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig"
   }, {
     "name" : "nats.streaming.server.stan_config",
@@ -87,12 +80,12 @@
   }, {
     "name" : "nats.streaming.server.ft_group",
     "type" : "java.lang.String",
-    "description" : "Name of the FT Group. A group can be 2 or more servers with a single active server and all sharing the same datastore.",
+    "description" : "Name of the FT Group. A group can be 2 or more servers with a single active server and all sharing the same datastore",
     "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig"
   }, {
     "name" : "nats.streaming.server.signal",
     "type" : "java.lang.String",
-    "description" : "[SIGNAL] Send signal to nats-streaming-server process (stop, quit, reopen)",
+    "description" : "Send signal to nats-streaming-server process (stop, quit, reopen, reload - only for embedded NATS Server)",
     "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig"
   }, {
     "name" : "nats.streaming.server.encrypt",
@@ -118,24 +111,22 @@
     "name" : "nats.streaming.server.clustered",
     "type" : "java.lang.Boolean",
     "description" : "Run the server in a clustered configuration (default: false)",
-    "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig",
-    "defaultValue" : "false"
+    "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig"
   }, {
     "name" : "nats.streaming.server.cluster_node_id",
     "type" : "java.lang.String",
-    "description" : "ID of the node within the cluster",
+    "description" : "ID of the node within the cluster if there is no stored ID (default: random UUID)",
     "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig",
     "defaultValue" : "82837aa8-b23d-481d-a07b-910a14fd0385"
   }, {
     "name" : "nats.streaming.server.cluster_bootstrap",
     "type" : "java.lang.Boolean",
     "description" : "Bootstrap the cluster if there is no existing state by electing self as leader (default: false)",
-    "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig",
-    "defaultValue" : "false"
+    "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig"
   }, {
     "name" : "nats.streaming.server.cluster_peers",
     "type" : "java.lang.String",
-    "description" : "List of cluster peer node IDs to bootstrap cluster state.",
+    "description" : "Comma separated list of cluster peer node IDs to bootstrap cluster state",
     "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig"
   }, {
     "name" : "nats.streaming.server.cluster_log_path",
@@ -146,14 +137,12 @@
     "name" : "nats.streaming.server.cluster_log_cache_size",
     "type" : "java.lang.Integer",
     "description" : "Number of log entries to cache in memory to reduce disk IO (default: 512)",
-    "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig",
-    "defaultValue" : "512"
+    "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig"
   }, {
     "name" : "nats.streaming.server.cluster_log_snapshots",
     "type" : "java.lang.Integer",
     "description" : "Number of log snapshots to retain (default: 2)",
-    "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig",
-    "defaultValue" : "2"
+    "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig"
   }, {
     "name" : "nats.streaming.server.cluster_trailing_logs",
     "type" : "java.lang.Integer",
@@ -172,7 +161,7 @@
   }, {
     "name" : "nats.streaming.server.cluster_allow_add_remove_node",
     "type" : "java.lang.Boolean",
-    "description" : "Enable the ability to send NATS requests to the leader to add/remove cluster",
+    "description" : "Enable the ability to send NATS requests to the leader to add/remove cluster nodes",
     "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig"
   }, {
     "name" : "nats.streaming.server.file_compact_enabled",
@@ -191,12 +180,12 @@
     "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig"
   }, {
     "name" : "nats.streaming.server.file_compact_min_size",
-    "type" : "java.lang.Long",
+    "type" : "java.lang.Integer",
     "description" : "Minimum file size for compaction",
     "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig"
   }, {
     "name" : "nats.streaming.server.file_buffer_size",
-    "type" : "java.lang.Long",
+    "type" : "java.lang.Integer",
     "description" : "File buffer size (in bytes)",
     "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig"
   }, {
@@ -221,7 +210,7 @@
     "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig"
   }, {
     "name" : "nats.streaming.server.file_slice_max_bytes",
-    "type" : "java.lang.Long",
+    "type" : "java.lang.Integer",
     "description" : "Maximum file slice size - including index file (subject to channel limits)",
     "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig"
   }, {
@@ -251,7 +240,7 @@
     "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig"
   }, {
     "name" : "nats.streaming.server.file_read_buffer_size",
-    "type" : "java.lang.Long",
+    "type" : "java.lang.Integer",
     "description" : "Size of messages read ahead buffer (0 to disable)",
     "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig"
   }, {
@@ -287,7 +276,7 @@
   }, {
     "name" : "nats.streaming.server.secure",
     "type" : "java.lang.Boolean",
-    "description" : "Use a TLS connection to the NATS server without verification; weaker than specifying certificates.",
+    "description" : "Use a TLS connection to the NATS server without",
     "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig"
   }, {
     "name" : "nats.streaming.server.tls_client_key",
@@ -308,14 +297,22 @@
     "name" : "nats.streaming.server.stan_debug",
     "type" : "java.lang.Boolean",
     "description" : "Enable STAN debugging output",
-    "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig",
-    "defaultValue" : false
+    "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig"
   }, {
     "name" : "nats.streaming.server.stan_trace",
     "type" : "java.lang.Boolean",
     "description" : "Trace the raw STAN protocol",
-    "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig",
-    "defaultValue" : false
+    "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig"
+  }, {
+    "name" : "nats.streaming.server.sdv",
+    "type" : "java.lang.Boolean",
+    "description" : "Debug and trace STAN",
+    "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig"
+  }, {
+    "name" : "nats.streaming.server.dv",
+    "type" : "java.lang.Boolean",
+    "description" : "Debug and trace",
+    "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig"
   }, {
     "name" : "nats.streaming.server.addr",
     "type" : "java.lang.String",
@@ -357,8 +354,7 @@
     "name" : "nats.streaming.server.logtime",
     "type" : "java.lang.Boolean",
     "description" : "Timestamp log entries (default: true)",
-    "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig",
-    "defaultValue" : true
+    "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig"
   }, {
     "name" : "nats.streaming.server.syslog",
     "type" : "java.lang.Boolean",
@@ -376,16 +372,14 @@
     "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig"
   }, {
     "name" : "nats.streaming.server.debug",
-    "type" : "java.lang.String",
+    "type" : "java.lang.Boolean",
     "description" : "Enable debugging output",
-    "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig",
-    "defaultValue" : false
+    "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig"
   }, {
     "name" : "nats.streaming.server.trace",
-    "type" : "java.lang.String",
+    "type" : "java.lang.Boolean",
     "description" : "Trace the raw protocol",
-    "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig",
-    "defaultValue" : false
+    "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig"
   }, {
     "name" : "nats.streaming.server.user",
     "type" : "java.lang.String",
@@ -405,8 +399,7 @@
     "name" : "nats.streaming.server.tls",
     "type" : "java.lang.Boolean",
     "description" : "Enable TLS, do not verify clients (default: false)",
-    "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig",
-    "defaultValue" : false
+    "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig"
   }, {
     "name" : "nats.streaming.server.tlscert",
     "type" : "java.lang.String",
@@ -438,6 +431,33 @@
     "description" : "Cluster URL for solicited routes",
     "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig"
   }, {
+    "name" : "nats.streaming.server.help",
+    "type" : "java.lang.Boolean",
+    "description" : "Show this message\n(default: false)",
+    "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig"
+  }, {
+    "name" : "nats.streaming.server.help_tls",
+    "type" : "java.lang.Boolean",
+    "description" : "TLS help.\n(default: false)",
+    "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig"
+  }, {
+    "name" : "nats.streaming.server.nats_autostart",
+    "type" : "java.lang.Boolean",
+    "description" : "[true] == auto closable, [false] == manual use `.start()` method (default: true)",
+    "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig",
+    "defaultValue" : true
+  }, {
+    "name" : "nats.streaming.server.nats_log_level",
+    "type" : "java.lang.String",
+    "description" : "java log level e.g. [OFF, SEVERE, WARNING, INFO, CONFIG, FINE, FINER, FINEST, ALL]",
+    "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig"
+  }, {
+    "name" : "nats.streaming.server.nats_timeout_ms",
+    "type" : "java.lang.String",
+    "description" : "true = auto closable, false manual use `.start()` method",
+    "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig",
+    "defaultValue" : 10000
+  }, {
     "name" : "nats.streaming.server.nats_system",
     "type" : "java.lang.String",
     "description" : "suffix for binary path",
@@ -466,14 +486,14 @@
     "description" : "Target Path to Nats binary or zip file - auto from NATS_DOWNLOAD_URL",
     "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig"
   }, {
-    "name" : "nats.streaming.server.nats_config_file",
+    "name" : "nats.streaming.server.nats_property_file",
     "type" : "java.lang.String",
-    "description" : "Additional property file with config value",
+    "description" : "Additional config file (properties / KV) same as DSL configs",
     "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig"
   }, {
     "name" : "nats.streaming.server.nats_args",
     "type" : "java.lang.String",
-    "description" : "custom arguments separated by \\, or just space",
+    "description" : "custom arguments separated by &&",
     "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig"
   } ]
 }
