@@ -44,7 +44,7 @@
         <gson.version>2.10.1</gson.version>
         <semver4j.version>3.1.0</semver4j.version>
         <spring-boot.version>3.1.5</spring-boot.version>
-        <nats-streaming-server.version>0.25.6-rc.6</nats-streaming-server.version>
+        <nats-streaming-server.version>0.25.6-rc.7</nats-streaming-server.version>
         <config-metadata-generator.version>0.6.116</config-metadata-generator.version>
         <!-- VERSIONS BUILD -->
         <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
@@ -54,8 +54,8 @@
         <maven-javadoc-plugin.version>3.1.0</maven-javadoc-plugin.version>
         <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
         <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
-        <maven-failsafe-plugin.version>3.2.1</maven-failsafe-plugin.version>
-        <maven-surefire-plugin.version>3.2.1</maven-surefire-plugin.version>
+        <maven-failsafe-plugin.version>3.2.2</maven-failsafe-plugin.version>
+        <maven-surefire-plugin.version>3.2.2</maven-surefire-plugin.version>
         <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
     </properties>
 
