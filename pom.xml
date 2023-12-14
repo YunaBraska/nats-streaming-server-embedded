@@ -44,8 +44,8 @@
         <gson.version>2.10.1</gson.version>
         <semver4j.version>3.1.0</semver4j.version>
         <spring-boot.version>3.2.0</spring-boot.version>
-        <nats-streaming-server.version>0.25.6</nats-streaming-server.version>
-        <config-metadata-generator.version>0.6.120</config-metadata-generator.version>
+        <nats-streaming-server.version>0.25.7-rc.1</nats-streaming-server.version>
+        <config-metadata-generator.version>0.6.121</config-metadata-generator.version>
         <!-- VERSIONS BUILD -->
         <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
         <maven-scm-plugin.version>1.11.2</maven-scm-plugin.version>
