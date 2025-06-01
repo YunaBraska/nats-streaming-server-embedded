@@ -447,6 +447,12 @@
     "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig",
     "defaultValue" : true
   }, {
+    "name" : "nats.streaming.server.nats_shutdown_hook",
+    "type" : "java.lang.Boolean",
+    "description" : "[true] == registers a shutdown hook, [false] == manual use `.stop()` method (default: true)",
+    "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig",
+    "defaultValue" : true
+  }, {
     "name" : "nats.streaming.server.nats_log_level",
     "type" : "java.lang.String",
     "description" : "java log level e.g. [OFF, SEVERE, WARNING, INFO, CONFIG, FINE, FINER, FINEST, ALL]",
@@ -473,7 +479,7 @@
     "type" : "java.lang.String",
     "description" : "Overwrites Nats server version on path",
     "sourceType" : "berlin.yuna.natsserver.config.NatsStreamingConfig",
-    "defaultValue" : "v0.25.4"
+    "defaultValue" : "v0.25.6"
   }, {
     "name" : "nats.streaming.server.nats_download_url",
     "type" : "java.lang.String",
