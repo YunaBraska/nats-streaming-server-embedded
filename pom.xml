@@ -6,7 +6,7 @@
 
     <groupId>berlin.yuna</groupId>
     <artifactId>nats-streaming-server-embedded</artifactId>
-    <version>0.25.7-rc.111</version>
+    <version>0.25.7-rc.112</version>
     <packaging>jar</packaging>
 
     <name>${project.artifactId}</name>
@@ -43,7 +43,7 @@
 
         <!-- PROD -->
         <slf4j-api.version>2.0.17</slf4j-api.version>
-        <spring-boot.version>3.5.4</spring-boot.version>
+        <spring-boot.version>3.5.5</spring-boot.version>
         <nats-streaming-server.version>0.25.7-rc.52</nats-streaming-server.version>
         <config-metadata-generator.version>2025.08.2280510</config-metadata-generator.version>
 
