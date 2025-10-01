@@ -6,7 +6,7 @@
 
     <groupId>berlin.yuna</groupId>
     <artifactId>nats-streaming-server-embedded</artifactId>
-    <version>0.25.7-rc.124</version>
+    <version>0.25.7-rc.125</version>
     <packaging>jar</packaging>
 
     <name>${project.artifactId}</name>
@@ -49,10 +49,10 @@
 
         <!-- TEST -->
         <gson.version>2.13.2</gson.version>
-        <junit.version>5.13.4</junit.version>
+        <junit.version>6.0.0</junit.version>
         <semver4j.version>3.1.0</semver4j.version>
         <assertj-core.version>3.27.3</assertj-core.version>
-        <junit-launcher.version>1.13.4</junit-launcher.version>
+        <junit-launcher.version>6.0.0</junit-launcher.version>
 
         <!-- BUILD -->
         <maven-gpg-plugin.version>3.2.7</maven-gpg-plugin.version>
