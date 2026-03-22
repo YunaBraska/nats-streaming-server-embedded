@@ -1,8 +1,6 @@
 name: "Central"
 
-permissions:
-  contents: read
-  packages: read
+permissions: {}
 
 on:
   workflow_dispatch:
@@ -19,6 +17,8 @@ on:
 
 jobs:
   maven_central:
+    permissions:
+      contents: read
     uses: YunaBraska/YunaBraska/.github/workflows/wc_java_maven_central.yml@feature/java-workflows-spike
     with:
       version: ${{ inputs.version }}

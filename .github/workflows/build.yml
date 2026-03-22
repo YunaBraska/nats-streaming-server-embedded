@@ -1,8 +1,6 @@
 name: "Build"
 
-permissions:
-  contents: write
-  packages: read
+permissions: {}
 
 on:
   push:
@@ -38,6 +36,7 @@ jobs:
   context:
     name: "📄 Context"
     runs-on: ubuntu-latest
+    permissions: {}
     outputs:
       ref: ${{ steps.values.outputs.ref }}
       run_update: ${{ steps.values.outputs.run_update }}
@@ -106,6 +105,9 @@ jobs:
 
   pipeline:
     needs: context
+    permissions:
+      contents: write
+      packages: read
     uses: YunaBraska/YunaBraska/.github/workflows/wc_java_pipeline.yml@feature/java-workflows-spike
     with:
       ref: ${{ needs.context.outputs.ref }}
