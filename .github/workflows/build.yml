@@ -108,7 +108,7 @@ jobs:
     permissions:
       contents: write
       packages: read
-    uses: YunaBraska/YunaBraska/.github/workflows/wc_java_pipeline.yml@feature/java-workflows-spike
+    uses: YunaBraska/YunaBraska/.github/workflows/wc_java_pipeline.yml@main
     with:
       ref: ${{ needs.context.outputs.ref }}
       version_policy: nats-sync

@@ -19,7 +19,7 @@ jobs:
   maven_central:
     permissions:
       contents: read
-    uses: YunaBraska/YunaBraska/.github/workflows/wc_java_maven_central.yml@feature/java-workflows-spike
+    uses: YunaBraska/YunaBraska/.github/workflows/wc_java_maven_central.yml@main
     with:
       version: ${{ inputs.version }}
       dry_run: ${{ inputs.dry_run != false }}

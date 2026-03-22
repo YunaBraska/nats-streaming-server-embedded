@@ -17,7 +17,7 @@ jobs:
   github_release:
     permissions:
       contents: write
-    uses: YunaBraska/YunaBraska/.github/workflows/wc_java_github_release.yml@feature/java-workflows-spike
+    uses: YunaBraska/YunaBraska/.github/workflows/wc_java_github_release.yml@main
     with:
       version: ${{ inputs.version || github.ref_name }}
     secrets: inherit
@@ -26,7 +26,7 @@ jobs:
     permissions:
       contents: read
       packages: write
-    uses: YunaBraska/YunaBraska/.github/workflows/wc_java_github_packages.yml@feature/java-workflows-spike
+    uses: YunaBraska/YunaBraska/.github/workflows/wc_java_github_packages.yml@main
     with:
       version: ${{ inputs.version || github.ref_name }}
     secrets: inherit
