@@ -3,6 +3,11 @@ name: "Build"
 on:
   workflow_dispatch:
     inputs:
+      version:
+        type: string
+        default: "%timestamp%"
+        required: false
+        description: "Literal version or preset like %timestamp%"
       run_update:
         type: boolean
         default: false
@@ -13,26 +18,31 @@ on:
         default: true
         required: false
         description: "Runs tests"
-      run_deploy:
-        type: choice
+      push_changes:
+        type: boolean
+        default: false
         required: false
-        default: "false"
-        description: "true=force, false=on changes, disabled=never"
-        options:
-          - "disabled"
-          - "true"
-          - "false"
+        description: "Commit and push changes when possible"
+      create_tag:
+        type: boolean
+        default: false
+        required: false
+        description: "Create and push a tag when possible"
       ref:
         type: string
         required: false
         description: "[Optional] branch, tag or commit"
 
 jobs:
-  builld:
-    uses: YunaBraska/YunaBraska/.github/workflows/wc_java_build.yml@main
+  pipeline:
+    uses: YunaBraska/YunaBraska/.github/workflows/wc_java_pipeline.yml@feature/java-workflows-spike
     with:
       ref: ${{ github.event.inputs.ref || github.ref || github.ref_name || github.head_ref }}
+      version: ${{ inputs.version }}
+      version_policy: nats-sync
+      version_sync_property: nats-streaming-server.version
       run_update: ${{ inputs.run_update }}
       run_test: ${{ inputs.run_test }}
-      run_deploy: ${{ inputs.run_deploy }}
+      push_changes: ${{ inputs.push_changes }}
+      create_tag: ${{ inputs.create_tag }}
     secrets: inherit

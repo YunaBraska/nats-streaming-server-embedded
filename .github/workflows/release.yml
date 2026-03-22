@@ -1,0 +1,19 @@
+name: "Release"
+
+on:
+  push:
+    tags:
+      - "*"
+  workflow_dispatch:
+    inputs:
+      version:
+        type: string
+        required: true
+        description: "Existing git tag to release"
+
+jobs:
+  github_release:
+    uses: YunaBraska/YunaBraska/.github/workflows/wc_java_github_release.yml@feature/java-workflows-spike
+    with:
+      version: ${{ inputs.version || github.ref_name }}
+    secrets: inherit

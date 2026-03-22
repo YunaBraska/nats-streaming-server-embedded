@@ -4,12 +4,47 @@ on:
   schedule:
     - cron: '0 7 * * *'
   workflow_dispatch:
+    inputs:
+      version:
+        type: string
+        default: "%timestamp%"
+        required: false
+        description: "Literal version or preset like %timestamp%"
+      run_update:
+        type: boolean
+        default: true
+        required: false
+        description: "Update wrapper and dependency properties"
+      run_test:
+        type: boolean
+        default: true
+        required: false
+        description: "Run tests before writing a release version"
+      push_changes:
+        type: boolean
+        default: true
+        required: false
+        description: "Commit and push changes when possible"
+      create_tag:
+        type: boolean
+        default: true
+        required: false
+        description: "Create and push a tag when possible"
+      ref:
+        type: string
+        required: false
+        description: "[Optional] branch, tag or commit"
 
 jobs:
-  builld:
-    uses: YunaBraska/YunaBraska/.github/workflows/wc_java_build.yml@main
+  pipeline:
+    uses: YunaBraska/YunaBraska/.github/workflows/wc_java_pipeline.yml@feature/java-workflows-spike
     with:
-      run_update: true
-      run_test: true
-      run_deploy: false
+      ref: ${{ github.event.inputs.ref || github.ref || github.ref_name || github.head_ref }}
+      version: ${{ inputs.version || '%timestamp%' }}
+      version_policy: nats-sync
+      version_sync_property: nats-streaming-server.version
+      run_update: ${{ inputs.run_update != false }}
+      run_test: ${{ inputs.run_test != false }}
+      push_changes: ${{ inputs.push_changes != false }}
+      create_tag: ${{ inputs.create_tag != false }}
     secrets: inherit

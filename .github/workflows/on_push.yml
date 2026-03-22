@@ -8,11 +8,14 @@ on:
       - default
 
 jobs:
-  builld:
-    uses: YunaBraska/YunaBraska/.github/workflows/wc_java_build.yml@main
+  pipeline:
+    uses: YunaBraska/YunaBraska/.github/workflows/wc_java_pipeline.yml@feature/java-workflows-spike
     with:
       ref: ${{ github.ref_name }}
-      run_update: false  # Updates only on main branches
-      run_test: true     # Always run tests
-      run_deploy: disabled  # Never deploy on non-main branches
+      version_policy: nats-sync
+      version_sync_property: nats-streaming-server.version
+      run_update: false
+      run_test: true
+      push_changes: false
+      create_tag: false
     secrets: inherit
