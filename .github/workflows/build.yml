@@ -3,11 +3,6 @@ name: "Build"
 on:
   workflow_dispatch:
     inputs:
-      version:
-        type: string
-        default: "%timestamp%"
-        required: false
-        description: "Literal version or preset like %timestamp%"
       run_update:
         type: boolean
         default: false
@@ -22,12 +17,12 @@ on:
         type: boolean
         default: false
         required: false
-        description: "Commit and push changes when possible"
+        description: "Commit and push changes without creating a release tag"
       create_tag:
         type: boolean
         default: false
         required: false
-        description: "Create and push a tag when possible"
+        description: "Create and push a release tag; implies push_changes"
       ref:
         type: string
         required: false
@@ -38,7 +33,6 @@ jobs:
     uses: YunaBraska/YunaBraska/.github/workflows/wc_java_pipeline.yml@feature/java-workflows-spike
     with:
       ref: ${{ github.event.inputs.ref || github.ref || github.ref_name || github.head_ref }}
-      version: ${{ inputs.version }}
       version_policy: nats-sync
       version_sync_property: nats-streaming-server.version
       run_update: ${{ inputs.run_update }}
