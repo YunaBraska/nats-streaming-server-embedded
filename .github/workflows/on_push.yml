@@ -13,7 +13,6 @@ jobs:
     with:
       ref: ${{ github.ref_name }}
       version_policy: nats-sync
-      version_sync_property: nats-streaming-server.version
       run_update: false
       run_test: true
       create_tag: false

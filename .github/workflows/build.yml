@@ -29,7 +29,6 @@ jobs:
     with:
       ref: ${{ github.event.inputs.ref || github.ref || github.ref_name || github.head_ref }}
       version_policy: nats-sync
-      version_sync_property: nats-streaming-server.version
       run_update: ${{ inputs.run_update }}
       run_test: ${{ inputs.run_test }}
       create_tag: ${{ inputs.create_tag }}
