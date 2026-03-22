@@ -16,6 +16,5 @@ jobs:
       version_sync_property: nats-streaming-server.version
       run_update: false
       run_test: true
-      push_changes: false
       create_tag: false
     secrets: inherit

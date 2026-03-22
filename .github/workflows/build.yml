@@ -13,16 +13,11 @@ on:
         default: true
         required: false
         description: "Runs tests"
-      push_changes:
-        type: boolean
-        default: false
-        required: false
-        description: "Commit and push changes without creating a release tag"
       create_tag:
         type: boolean
         default: false
         required: false
-        description: "Create and push a release tag; implies push_changes"
+        description: "Create and push a release tag"
       ref:
         type: string
         required: false
@@ -37,6 +32,5 @@ jobs:
       version_sync_property: nats-streaming-server.version
       run_update: ${{ inputs.run_update }}
       run_test: ${{ inputs.run_test }}
-      push_changes: ${{ inputs.push_changes }}
       create_tag: ${{ inputs.create_tag }}
     secrets: inherit
