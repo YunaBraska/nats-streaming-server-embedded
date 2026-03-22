@@ -1,0 +1,26 @@
+name: "Central"
+
+permissions: {}
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        type: string
+        required: true
+        description: "Existing git tag to validate or publish"
+      dry_run:
+        type: boolean
+        default: true
+        required: false
+        description: "Validate release build without publishing to Maven Central"
+
+jobs:
+  maven_central:
+    permissions:
+      contents: read
+    uses: YunaBraska/YunaBraska/.github/workflows/wc_java_maven_central.yml@main
+    with:
+      version: ${{ inputs.version }}
+      dry_run: ${{ inputs.dry_run != false }}
+    secrets: inherit
