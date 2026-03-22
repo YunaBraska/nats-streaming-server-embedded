@@ -1,4 +1,8 @@
-name: "Release"
+name: "Publish"
+
+permissions:
+  contents: write
+  packages: write
 
 on:
   push:
@@ -9,11 +13,17 @@ on:
       version:
         type: string
         required: true
-        description: "Existing git tag to release"
+        description: "Existing git tag to publish"
 
 jobs:
   github_release:
     uses: YunaBraska/YunaBraska/.github/workflows/wc_java_github_release.yml@feature/java-workflows-spike
+    with:
+      version: ${{ inputs.version || github.ref_name }}
+    secrets: inherit
+
+  github_packages:
+    uses: YunaBraska/YunaBraska/.github/workflows/wc_java_github_packages.yml@feature/java-workflows-spike
     with:
       version: ${{ inputs.version || github.ref_name }}
     secrets: inherit
