@@ -8,12 +8,7 @@ on:
       version:
         type: string
         required: true
-        description: "Existing git tag to validate or publish"
-      dry_run:
-        type: boolean
-        default: true
-        required: false
-        description: "Validate release build without publishing to Maven Central"
+        description: "Existing git tag to publish to Maven Central"
 
 jobs:
   maven_central:
@@ -22,5 +17,4 @@ jobs:
     uses: YunaBraska/YunaBraska/.github/workflows/wc_java_maven_central.yml@main
     with:
       version: ${{ inputs.version }}
-      dry_run: ${{ inputs.dry_run != false }}
     secrets: inherit
