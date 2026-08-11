@@ -27,6 +27,8 @@ jobs:
     permissions:
       contents: read
       packages: read
-    uses: YunaBraska/YunaBraska/.github/workflows/wc_java_build_common.yml@c2e9439c9a40da4afb8281ea4d9014bddef92aca
+    uses: YunaBraska/YunaBraska/.github/workflows/wc_java_build_common.yml@bb8dbcb2788d76ae4dfcc96ab2c1e0cdbd0a52c8
     with:
       ref: ${{ inputs.ref || github.sha }}
+    secrets:
+      CI_TOKEN: ${{ secrets.CI_TOKEN }}
