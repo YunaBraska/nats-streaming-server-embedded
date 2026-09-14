@@ -1,4 +1,3 @@
-# yuna-java-upstream: nats-io/nats-streaming-server
 name: 🛠️ CI · Maintenance
 
 on:
@@ -22,4 +21,15 @@ jobs:
       pull-requests: write
     uses: YunaBraska/YunaBraska/.github/workflows/wc_java_update_maven_wrapper.yml@0efa5d3b275e474e54af0ced8ba1a771f6b9df7c
     with:
+      dry_run: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || false }}
+
+  upstream:
+    permissions:
+      actions: write
+      contents: write
+      packages: read
+      pull-requests: write
+    uses: YunaBraska/YunaBraska/.github/workflows/wc_java_update_upstream.yml@5b74baf9f3b43e6e4b43c249c4dd8f3bff4b739e
+    with:
+      upstream_repository: nats-io/nats-streaming-server
       dry_run: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || false }}
